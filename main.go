@@ -1,23 +1,35 @@
 package main
 
 import (
-	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"time"
 
+	"github.com/ferromarket/backend/routes"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/julienschmidt/httprouter"
 )
 
+type Message struct {
+    Message string
+}
+
 func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-    fmt.Fprint(w, "Welcome!\n")
+    fmt.Fprintf(w, "This is the golang api server!")
 }
 
 func Hello(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-    fmt.Fprintf(w, "hello, %s!\n", ps.ByName("name"))
+    datas := Message{}
+    datas.Message = "Hello, " + ps.ByName("name")
+
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusOK)
+    json.NewEncoder(w).Encode(datas)
+    //fmt.Fprintf(w, "hello, %s!\n", ps.ByName("name"))
 }
 
 func main() {
@@ -25,7 +37,9 @@ func main() {
     router.GET("/", Index)
     router.GET("/hello/:name", Hello)
 
-    dbUser, exists := os.LookupEnv("MYSQL_USER")
+    routes.PrintBaz()
+
+    /*dbUser, exists := os.LookupEnv("MYSQL_USER")
     if !exists {
         dbUser = "user"
     }

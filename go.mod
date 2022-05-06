@@ -1,4 +1,4 @@
-module backend
+module github.com/ferromarket/backend
 
 go 1.18
 
