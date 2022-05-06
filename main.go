@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/ferromarket/backend/routes"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/julienschmidt/httprouter"
 )
@@ -32,6 +34,8 @@ func main() {
     router := httprouter.New()
     router.GET("/", Index)
     router.GET("/hello/:name", Hello)
+
+    routes.PrintBaz()
 
     /*dbUser, exists := os.LookupEnv("MYSQL_USER")
     if !exists {
