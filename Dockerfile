@@ -3,9 +3,9 @@ WORKDIR /usr/src/app
 COPY go.mod go.sum ./
 RUN go mod download && go mod verify
 COPY . .
-RUN go build -buildvcs=false -v ./...
+RUN go build -buildvcs=false -o /usr/local/bin -v ./...
 
 FROM golang:1.18
 WORKDIR /usr/local/bin
-COPY --from=builder /usr/src/app/backend .
+COPY --from=builder /usr/local/bin/backend .
 CMD ["backend"]
