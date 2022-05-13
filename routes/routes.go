@@ -10,10 +10,6 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-type Message struct {
-    Message string
-}
-
 func Initialize() (*httprouter.Router) {
     router := httprouter.New()
     router.GET("/", index)
