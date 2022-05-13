@@ -4,6 +4,6 @@ import "gorm.io/gorm"
 
 type Hora struct {
 	gorm.Model
-	ID uint64 `json:"id" gorm:"primaryKey"`
-	Hora string `json:"hora" gorm:"unique;size:5;not null"`
+	ID uint64 `json:"ID" gorm:"primaryKey"`
+	Hora string `json:"Hora" gorm:"unique;size:5;not null"`
 }
