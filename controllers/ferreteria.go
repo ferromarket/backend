@@ -10,7 +10,7 @@ import (
 )
 
 type Ferreterias struct {
-    Ferreterias []models.Ferreteria `json:"ferreterias"`
+    Ferreterias []models.Ferreteria `json:"Ferreterias"`
 }
 
 func PostFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
@@ -32,7 +32,7 @@ func ListFerreterias(writer http.ResponseWriter, request *http.Request, params h
 	ferreteriaList := Ferreterias{}
 	var ferreterias []models.Ferreteria
 
-	db.Order("ID asc").Find(&ferreterias)
+	db.Model(&models.Ferreteria{}).Preload("Comuna.Ciudad.Region.Pais").Order("ID asc").Find(&ferreterias)
 
 	ferreteriaList.Ferreterias = ferreterias
 
