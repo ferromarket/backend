@@ -8,5 +8,7 @@ type Ferreteria struct {
 	Nombre string `json:"nombre" gorm:"unique;not null"`
 	ComunaID uint64 `json:"comuna_id"`
 	Comuna Comuna `json:"comuna"`
+	Direccion string `json:"direccion"`
+	Descripcion string `json:"descripcion"`
 	Horarios []Dia `json:"horarios" gorm:"many2many:ferreteria_horario"`
 }
