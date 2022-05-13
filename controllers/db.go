@@ -3,11 +3,13 @@ package controllers
 import (
 	"os"
 
+	"github.com/ferromarket/backend/models"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
-func dbConnect() (*gorm.DB) {
+func DBConnect() (*gorm.DB) {
 	dbUser, exists := os.LookupEnv("MYSQL_USER")
     if !exists {
         dbUser = "user"
@@ -22,13 +24,17 @@ func dbConnect() (*gorm.DB) {
     }
     dbName, exists := os.LookupEnv("MYSQL_DATABASE")
     if !exists {
-        dbName = "database"
+        dbName = "ferromarket"
 	}
 
 	db, err := gorm.Open(mysql.New(mysql.Config{
 		DSN: dbUser + ":" + dbPass + "@tcp(" + dbHost + ")/" + dbName + "?charset=utf8mb4&parseTime=True&loc=Local",
 		DefaultStringSize: 256,
-	}), &gorm.Config{})
+	}), &gorm.Config{
+		NamingStrategy: schema.NamingStrategy{
+			SingularTable: true,
+		},
+	})
 	if err != nil {
 		panic("failed to connect database")
 	}
@@ -36,7 +42,19 @@ func dbConnect() (*gorm.DB) {
 	return db
 }
 
-func dbClose(db *gorm.DB) {
+func DBAutoMigrate(db *gorm.DB) {
+	db.SetupJoinTable(&models.Ferreteria{}, "Horarios", &models.FerreteriaHorario{})
+	db.AutoMigrate(&models.Ciudad{})
+	db.AutoMigrate(&models.Comuna{})
+	db.AutoMigrate(&models.Dia{})
+	db.AutoMigrate(&models.Ferreteria{})
+	db.AutoMigrate(&models.Hora{})
+	db.AutoMigrate(&models.FerreteriaHorario{})
+	db.AutoMigrate(&models.Pais{})
+	db.AutoMigrate(&models.Region{})
+}
+
+func DBClose(db *gorm.DB) {
 	sqlDB, err := db.DB()
 	if err != nil {
 		panic("failed to get gorm db")

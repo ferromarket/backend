@@ -14,12 +14,11 @@ type Ferreterias struct {
 }
 
 func PostFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	db := dbConnect()
-	db.AutoMigrate(&models.Ferreteria{})
+	db := DBConnect()
 
-	postFerreteria(models.Ferreteria{Name: "Chris's hardware"}, db)
+	postFerreteria(models.Ferreteria{Nombre: params.ByName("nombre")}, db)
 
-	dbClose(db)
+	DBClose(db)
 }
 
 func postFerreteria(ferreteria models.Ferreteria, db *gorm.DB) {
@@ -27,7 +26,8 @@ func postFerreteria(ferreteria models.Ferreteria, db *gorm.DB) {
 }
 
 func ListFerreterias(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	db := dbConnect()
+	db := DBConnect()
+	db.AutoMigrate(&models.Ferreteria{})
 
 	ferreteriaList := Ferreterias{}
 	var ferreterias []models.Ferreteria
@@ -40,7 +40,7 @@ func ListFerreterias(writer http.ResponseWriter, request *http.Request, params h
     writer.WriteHeader(http.StatusOK)
     json.NewEncoder(writer).Encode(ferreteriaList)
 
-	dbClose(db)
+	DBClose(db)
 }
 
 func GetFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
