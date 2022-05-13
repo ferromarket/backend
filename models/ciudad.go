@@ -4,8 +4,8 @@ import "gorm.io/gorm"
 
 type Ciudad struct {
 	gorm.Model
-	ID uint64 `json:"id" gorm:"primaryKey;autoIncrement"`
-	RegionID uint64 `json:"region_id"`
-	Region Region `json:"region"`
-	Nombre string `json:"nombre" gorm:"unique;not null"`
+	ID uint64 `json:"ID" gorm:"primaryKey;autoIncrement"`
+	RegionID uint64 `json:"RegionID"`
+	Region Region `json:"Region"`
+	Nombre string `json:"Nombre" gorm:"unique;not null"`
 }
