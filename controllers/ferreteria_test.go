@@ -36,13 +36,13 @@ func TestPostFerreteria(t *testing.T) {
 	mock.ExpectBegin()
 
 	mock.ExpectExec(
-		regexp.QuoteMeta("INSERT INTO `ferreteria` (`name`) VALUES (?)")).
+		regexp.QuoteMeta("INSERT INTO `ferreteria` (`nombre`) VALUES (?)")).
 		WithArgs("Chris's hardware").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	mock.ExpectCommit()
 
-	postFerreteria(models.Ferreteria{Name: "Chris's hardware"}, db)
+	postFerreteria(models.Ferreteria{Nombre: "Chris's hardware"}, db)
 
 	err = mock.ExpectationsWereMet()
 	if err != nil {

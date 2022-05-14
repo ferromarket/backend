@@ -10,16 +10,15 @@ import (
 )
 
 type Ferreterias struct {
-    Ferreterias []models.Ferreteria `json:"ferreterias"`
+    Ferreterias []models.Ferreteria `json:"Ferreterias"`
 }
 
 func PostFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	db := dbConnect()
-	db.AutoMigrate(&models.Ferreteria{})
+	db := DBConnect()
 
-	postFerreteria(models.Ferreteria{Name: "Chris's hardware"}, db)
+	postFerreteria(models.Ferreteria{Nombre: params.ByName("nombre")}, db)
 
-	dbClose(db)
+	DBClose(db)
 }
 
 func postFerreteria(ferreteria models.Ferreteria, db *gorm.DB) {
@@ -27,12 +26,13 @@ func postFerreteria(ferreteria models.Ferreteria, db *gorm.DB) {
 }
 
 func ListFerreterias(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	db := dbConnect()
+	db := DBConnect()
+	db.AutoMigrate(&models.Ferreteria{})
 
 	ferreteriaList := Ferreterias{}
 	var ferreterias []models.Ferreteria
 
-	db.Order("ID asc").Find(&ferreterias)
+	db.Model(&models.Ferreteria{}).Order("ID asc").Preload("Horarios.Dia").Preload("Horarios.Abrir").Preload("Horarios.Cerrar").Preload("Comuna.Ciudad.Region.Pais").Joins("JOIN ferreteria_horario fh ON ferreteria.id = fh.ferreteria_id").Find(&ferreterias)
 
 	ferreteriaList.Ferreterias = ferreterias
 
@@ -40,7 +40,7 @@ func ListFerreterias(writer http.ResponseWriter, request *http.Request, params h
     writer.WriteHeader(http.StatusOK)
     json.NewEncoder(writer).Encode(ferreteriaList)
 
-	dbClose(db)
+	DBClose(db)
 }
 
 func GetFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
