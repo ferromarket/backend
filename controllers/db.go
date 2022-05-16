@@ -43,7 +43,6 @@ func DBConnect() (*gorm.DB) {
 }
 
 func DBAutoMigrate(db *gorm.DB) {
-	db.Migrator().DropTable(&models.Pais{}, &models.Region{}, &models.Ciudad{}, &models.Comuna{}, &models.Ferreteria{}, &models.Dia{}, &models.Hora{}, &models.FerreteriaHorario{})
 	db.SetupJoinTable(&models.Ferreteria{}, "Dias", &models.FerreteriaHorario{})
 	db.AutoMigrate(&models.Hora{})
 	db.AutoMigrate(&models.Ciudad{})
@@ -52,8 +51,24 @@ func DBAutoMigrate(db *gorm.DB) {
 	db.AutoMigrate(&models.Ferreteria{})
 	db.AutoMigrate(&models.Pais{})
 	db.AutoMigrate(&models.Region{})
+	db.AutoMigrate(&models.Vehiculo{})
+	db.AutoMigrate(&models.Repartidor{})
+	db.AutoMigrate(&models.Usuario{})
+}
 
-	DBPopulate(db)
+func DBDropAll(db *gorm.DB) {
+	db.Migrator().DropTable(
+		&models.Pais{},
+		&models.Region{},
+		&models.Ciudad{},
+		&models.Comuna{},
+		&models.Ferreteria{},
+		&models.Dia{},
+		&models.Hora{},
+		&models.FerreteriaHorario{},
+		&models.Usuario{},
+		&models.Repartidor{},
+		&models.Usuario{})
 }
 
 func DBPopulate(db *gorm.DB) {
@@ -88,6 +103,14 @@ func DBPopulate(db *gorm.DB) {
 	}
 
 	horas := []models.Hora{
+		{Hora: "00:00"},
+		{Hora: "01:00"},
+		{Hora: "02:00"},
+		{Hora: "03:00"},
+		{Hora: "04:00"},
+		{Hora: "05:00"},
+		{Hora: "06:00"},
+		{Hora: "07:00"},
 		{Hora: "08:00"},
 		{Hora: "09:00"},
 		{Hora: "10:00"},
@@ -103,14 +126,14 @@ func DBPopulate(db *gorm.DB) {
 		{Hora: "20:00"},
 		{Hora: "21:00"},
 		{Hora: "22:00"},
-	}
+		{Hora: "23:00"}}
 
 	horarios := []models.FerreteriaHorario{
 		{
 			FerreteriaID: 1,
 			DiaID: 1,
-			AbrirID: 1,
-			CerrarID: 15,
+			AbrirID: 9,
+			CerrarID: 22,
 		},
 	}
 
