@@ -27,7 +27,6 @@ func postFerreteria(ferreteria models.Ferreteria, db *gorm.DB) {
 
 func ListFerreterias(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	db := DBConnect()
-	db.AutoMigrate(&models.Ferreteria{})
 
 	ferreteriaList := Ferreterias{}
 	var ferreterias []models.Ferreteria
