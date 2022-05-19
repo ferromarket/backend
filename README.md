@@ -4,7 +4,11 @@
 ```
 go run main.go
 ```
-## Compiles for production
+## Compile for production
 ```
 go build
+```
+## Run tests
+```
+go test ./...
 ```
