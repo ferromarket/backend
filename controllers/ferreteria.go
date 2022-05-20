@@ -6,6 +6,7 @@ import (
 
 	"github.com/ferromarket/backend/database"
 	"github.com/ferromarket/backend/models"
+	"github.com/ferromarket/backend/utils"
 	"github.com/julienschmidt/httprouter"
 	"gorm.io/gorm"
 )
@@ -17,13 +18,36 @@ type Ferreterias struct {
 func PostFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
 
-	postFerreteria(models.Ferreteria{Nombre: params.ByName("nombre")}, gdb)
+	decoder := json.NewDecoder(request.Body)
+
+	var ferreteria models.Ferreteria
+
+	err := decoder.Decode(&ferreteria)
+	if (err != nil) {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+	}
+
+	err = postFerreteria(ferreteria, gdb)
+	if (err != nil) {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+	} else {
+		writer.WriteHeader(http.StatusOK)
+	}
 
 	database.Close(gdb)
 }
 
-func postFerreteria(ferreteria models.Ferreteria, gdb *gorm.DB) {
-	gdb.Create(&ferreteria)
+func postFerreteria(ferreteria models.Ferreteria, gdb *gorm.DB) error {
+	return gdb.Create(&ferreteria).Error
+	/*sql := gdb.ToSQL(func(tx *gorm.DB) *gorm.DB {
+		return tx.Create(&ferreteria)
+	})
+
+	fmt.Println(sql)*/
 }
 
 func ListFerreterias(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
@@ -36,9 +60,9 @@ func ListFerreterias(writer http.ResponseWriter, request *http.Request, params h
 
 	ferreteriaList.Ferreterias = ferreterias
 
-    writer.Header().Set("Content-Type", "application/json")
-    writer.WriteHeader(http.StatusOK)
-    json.NewEncoder(writer).Encode(ferreteriaList)
+	writer.Header().Set("Content-Type", "application/json")
+	writer.WriteHeader(http.StatusOK)
+	json.NewEncoder(writer).Encode(ferreteriaList)
 
 	database.Close(gdb)
 }
