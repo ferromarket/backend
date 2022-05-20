@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ferromarket/backend/controllers"
+	"github.com/ferromarket/backend/database"
 	"github.com/ferromarket/backend/routes"
 )
 
@@ -25,27 +25,27 @@ func main() {
     }
 
     fmt.Print("Connecting to database ... ")
-    db := controllers.DBConnect()
+    gdb := database.Connect()
     fmt.Println("DONE")
 
     if (dropDB) {
         fmt.Print("Dropping database ... ")
-        controllers.DBDropAll(db)
+        database.DropAll(gdb)
         fmt.Println("DONE")
     }
 
     fmt.Print("AutoMigrating database ... ")
-    controllers.DBAutoMigrate(db)
+    database.AutoMigrate(gdb)
     fmt.Println("DONE")
 
     if (populateDB) {
         fmt.Print("Populating database ... ")
-        controllers.DBPopulate(db)
+        database.Populate(gdb)
         fmt.Println("DONE")
     }
 
     fmt.Print("Closing database ... ")
-    controllers.DBClose(db)
+    database.Close(gdb)
     fmt.Println("DONE")
 
     router := routes.Initialize()

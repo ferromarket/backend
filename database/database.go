@@ -1,4 +1,4 @@
-package controllers
+package database
 
 import (
 	"os"
@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm/schema"
 )
 
-func DBConnect() (*gorm.DB) {
+func Connect() (*gorm.DB) {
 	dbUser, exists := os.LookupEnv("MYSQL_USER")
     if !exists {
         dbUser = "user"
@@ -27,7 +27,7 @@ func DBConnect() (*gorm.DB) {
         dbName = "ferromarket"
 	}
 
-	db, err := gorm.Open(mysql.New(mysql.Config{
+	gdb, err := gorm.Open(mysql.New(mysql.Config{
 		DSN: dbUser + ":" + dbPass + "@tcp(" + dbHost + ")/" + dbName + "?charset=utf8mb4&parseTime=True&loc=Local",
 		DefaultStringSize: 256,
 	}), &gorm.Config{
@@ -39,25 +39,25 @@ func DBConnect() (*gorm.DB) {
 		panic("failed to connect database")
 	}
 
-	return db
+	return gdb
 }
 
-func DBAutoMigrate(db *gorm.DB) {
-	db.SetupJoinTable(&models.Ferreteria{}, "Dias", &models.FerreteriaHorario{})
-	db.AutoMigrate(&models.Hora{})
-	db.AutoMigrate(&models.Ciudad{})
-	db.AutoMigrate(&models.Comuna{})
-	db.AutoMigrate(&models.Dia{})
-	db.AutoMigrate(&models.Ferreteria{})
-	db.AutoMigrate(&models.Pais{})
-	db.AutoMigrate(&models.Region{})
-	db.AutoMigrate(&models.Vehiculo{})
-	db.AutoMigrate(&models.Repartidor{})
-	db.AutoMigrate(&models.Usuario{})
+func AutoMigrate(gdb *gorm.DB) {
+	gdb.SetupJoinTable(&models.Ferreteria{}, "Dias", &models.FerreteriaHorario{})
+	gdb.AutoMigrate(&models.Hora{})
+	gdb.AutoMigrate(&models.Ciudad{})
+	gdb.AutoMigrate(&models.Comuna{})
+	gdb.AutoMigrate(&models.Dia{})
+	gdb.AutoMigrate(&models.Ferreteria{})
+	gdb.AutoMigrate(&models.Pais{})
+	gdb.AutoMigrate(&models.Region{})
+	gdb.AutoMigrate(&models.Vehiculo{})
+	gdb.AutoMigrate(&models.Repartidor{})
+	gdb.AutoMigrate(&models.Usuario{})
 }
 
-func DBDropAll(db *gorm.DB) {
-	db.Migrator().DropTable(
+func DropAll(gdb *gorm.DB) {
+	gdb.Migrator().DropTable(
 		&models.Pais{},
 		&models.Region{},
 		&models.Ciudad{},
@@ -71,7 +71,7 @@ func DBDropAll(db *gorm.DB) {
 		&models.Usuario{})
 }
 
-func DBPopulate(db *gorm.DB) {
+func Populate(gdb *gorm.DB) {
 	ferreteria := models.Ferreteria{
 		Nombre: "Chris's Hardware Store",
 		Direccion: "Canto del Valle 1777",
@@ -137,14 +137,14 @@ func DBPopulate(db *gorm.DB) {
 		},
 	}
 
-	db.Create(&ferreteria)
-	db.Create(&dias)
-	db.Create(&horas)
-	db.Create(&horarios)
+	gdb.Create(&ferreteria)
+	gdb.Create(&dias)
+	gdb.Create(&horas)
+	gdb.Create(&horarios)
 }
 
-func DBClose(db *gorm.DB) {
-	sqlDB, err := db.DB()
+func Close(gdb *gorm.DB) {
+	sqlDB, err := gdb.DB()
 	if err != nil {
 		panic("failed to get gorm db")
 	}

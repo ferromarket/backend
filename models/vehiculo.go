@@ -7,9 +7,9 @@ import (
 )
 
 type Vehiculo struct {
-	gorm.Model `json:"-"`
+	gorm.Model
 	ID uint64 `json:"ID" gorm:"primaryKey"`
-	RepartidorID uint64 `json:"-"`
+	RepartidorID uint64 `json:"RepartidorID"`
 	Repartidor Repartidor `json:"Repartidor"`
 	Tipo uint8 `json:"Tipo"`
 	Marca string `json:"Marca"`

@@ -3,10 +3,10 @@ package models
 import "gorm.io/gorm"
 
 type Ferreteria struct {
-	gorm.Model `json:"-"`
+	gorm.Model
 	ID uint64 `json:"ID" gorm:"primaryKey"`
 	Nombre string `json:"Nombre" gorm:"unique;not null"`
-	ComunaID uint64 `json:"-"`
+	ComunaID uint64 `json:"ComunaID"`
 	Comuna Comuna `json:"Comuna"`
 	Direccion string `json:"Direccion"`
 	Descripcion string `json:"Descripcion"`

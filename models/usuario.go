@@ -18,4 +18,5 @@ type Usuario struct {
 	Telefono uint32 `json:"Telefono"`
 	Direccion string `json:"Direccion" gorm:"not null"`
 	FechaNacimiento time.Time
+	Roles []Rol `json:"-" gorm:"many2many:usuario_rol"`
 }
