@@ -75,7 +75,7 @@ func Populate(gdb *gorm.DB) {
 	ferreteria := models.Ferreteria{
 		Nombre: "Chris's Hardware Store",
 		Direccion: "Canto del Valle 1777",
-		Descripcion: "Buy something here mother fucker!",
+		Descripcion: "Buy something here!",
 		Comuna: models.Comuna{
 			Nombre: "Hualpen",
 			Ciudad: models.Ciudad{
