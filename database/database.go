@@ -98,7 +98,7 @@ func Populate(gdb *gorm.DB) {
 		{Nombre: "Miércoles"},
 		{Nombre: "Jueves"},
 		{Nombre: "Viernes"},
-		{Nombre: "Sabado"},
+		{Nombre: "Sábado"},
 		{Nombre: "Domingo"},
 	}
 
