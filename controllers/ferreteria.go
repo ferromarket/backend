@@ -51,8 +51,7 @@ func ListFerreterias(writer http.ResponseWriter, request *http.Request, params h
 	ferreteriaList := Ferreterias{}
 	var ferreterias []models.Ferreteria
 
-	gdb.Model(&models.Ferreteria{}).Order("ID asc").Preload("Horarios.Dia").Preload("Horarios.Abrir").Preload("Horarios.Cerrar").Preload("Comuna.Ciudad.Region.Pais").Joins("LEFT JOIN ferreteria_horario fh ON ferreteria.id = fh.ferreteria_id").Find(&ferreterias)
-
+	listFerreterias(&ferreterias, gdb)
 	ferreteriaList.Ferreterias = ferreterias
 
 	writer.Header().Set("Content-Type", "application/json")
@@ -62,18 +61,26 @@ func ListFerreterias(writer http.ResponseWriter, request *http.Request, params h
 	database.Close(gdb)
 }
 
+func listFerreterias(ferreterias *[]models.Ferreteria, gdb *gorm.DB) error {
+	return gdb.Model(&models.Ferreteria{}).Order("ID asc").Preload("Horarios.Dia").Preload("Horarios.Abrir").Preload("Horarios.Cerrar").Preload("Comuna.Ciudad.Region.Pais").Joins("LEFT JOIN ferreteria_horario fh ON ferreteria.id = fh.ferreteria_id").Find(&ferreterias).Error
+}
+
 func GetFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
 
 	var ferreteria models.Ferreteria
 
-	gdb.Model(&models.Ferreteria{}).Order("ID asc").Preload("Horarios.Dia").Preload("Horarios.Abrir").Preload("Horarios.Cerrar").Preload("Comuna.Ciudad.Region.Pais").Joins("LEFT JOIN ferreteria_horario fh ON ferreteria.id = fh.ferreteria_id").Find(&ferreteria, params.ByName("id"))
+	getFerreteria(&ferreteria, params.ByName("id"), gdb)
 
 	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(http.StatusOK)
 	json.NewEncoder(writer).Encode(ferreteria)
 
 	database.Close(gdb)
+}
+
+func getFerreteria(ferreteria *models.Ferreteria, id string, gdb *gorm.DB) error {
+	return gdb.Model(&models.Ferreteria{}).Order("ID asc").Preload("Horarios.Dia").Preload("Horarios.Abrir").Preload("Horarios.Cerrar").Preload("Comuna.Ciudad.Region.Pais").Joins("LEFT JOIN ferreteria_horario fh ON ferreteria.id = fh.ferreteria_id").Find(&ferreteria, id).Error
 }
 
 func PutFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
