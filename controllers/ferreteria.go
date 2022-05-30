@@ -43,11 +43,6 @@ func PostFerreteria(writer http.ResponseWriter, request *http.Request, params ht
 
 func postFerreteria(ferreteria models.Ferreteria, gdb *gorm.DB) error {
 	return gdb.Create(&ferreteria).Error
-	/*sql := gdb.ToSQL(func(tx *gorm.DB) *gorm.DB {
-		return tx.Create(&ferreteria)
-	})
-
-	fmt.Println(sql)*/
 }
 
 func ListFerreterias(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
