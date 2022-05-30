@@ -29,11 +29,11 @@ func PostFerreteria(writer http.ResponseWriter, request *http.Request, params ht
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
 	}
 
-	err = postFerreteria(ferreteria, gdb)
-	if (err != nil) {
+	result := postFerreteria(ferreteria, gdb)
+	if (result.Error != nil) {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
 	} else {
 		writer.WriteHeader(http.StatusOK)
 	}
@@ -41,8 +41,8 @@ func PostFerreteria(writer http.ResponseWriter, request *http.Request, params ht
 	database.Close(gdb)
 }
 
-func postFerreteria(ferreteria models.Ferreteria, gdb *gorm.DB) error {
-	return gdb.Create(&ferreteria).Error
+func postFerreteria(ferreteria models.Ferreteria, gdb *gorm.DB) *gorm.DB {
+	return gdb.Create(&ferreteria)
 }
 
 func ListFerreterias(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
@@ -51,18 +51,24 @@ func ListFerreterias(writer http.ResponseWriter, request *http.Request, params h
 	ferreteriaList := Ferreterias{}
 	var ferreterias []models.Ferreteria
 
-	listFerreterias(&ferreterias, gdb)
-	ferreteriaList.Ferreterias = ferreterias
+	result := listFerreterias(&ferreterias, gdb)
+	if (result.Error != nil) {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+	} else {
+		ferreteriaList.Ferreterias = ferreterias
 
-	writer.Header().Set("Content-Type", "application/json")
-	writer.WriteHeader(http.StatusOK)
-	json.NewEncoder(writer).Encode(ferreteriaList)
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusOK)
+		json.NewEncoder(writer).Encode(ferreteriaList)
+	}
 
 	database.Close(gdb)
 }
 
-func listFerreterias(ferreterias *[]models.Ferreteria, gdb *gorm.DB) error {
-	return gdb.Model(&models.Ferreteria{}).Order("ID asc").Preload("Horarios.Dia").Preload("Horarios.Abrir").Preload("Horarios.Cerrar").Preload("Comuna.Ciudad.Region.Pais").Joins("LEFT JOIN ferreteria_horario fh ON ferreteria.id = fh.ferreteria_id").Find(&ferreterias).Error
+func listFerreterias(ferreterias *[]models.Ferreteria, gdb *gorm.DB) *gorm.DB {
+	return gdb.Model(&models.Ferreteria{}).Order("ID asc").Preload("Horarios.Dia").Preload("Horarios.Abrir").Preload("Horarios.Cerrar").Preload("Comuna.Ciudad.Region.Pais").Joins("LEFT JOIN ferreteria_horario fh ON ferreteria.id = fh.ferreteria_id").Find(&ferreterias)
 }
 
 func GetFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
@@ -70,17 +76,26 @@ func GetFerreteria(writer http.ResponseWriter, request *http.Request, params htt
 
 	var ferreteria models.Ferreteria
 
-	getFerreteria(&ferreteria, params.ByName("id"), gdb)
-
-	writer.Header().Set("Content-Type", "application/json")
-	writer.WriteHeader(http.StatusOK)
-	json.NewEncoder(writer).Encode(ferreteria)
+	result := getFerreteria(&ferreteria, params.ByName("id"), gdb)
+	if (result.Error != nil) {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+	} else if (result.RowsAffected == 0) {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe ferreteria con id " + params.ByName("id") + "!"})
+	} else {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusOK)
+		json.NewEncoder(writer).Encode(ferreteria)
+	}
 
 	database.Close(gdb)
 }
 
-func getFerreteria(ferreteria *models.Ferreteria, id string, gdb *gorm.DB) error {
-	return gdb.Model(&models.Ferreteria{}).Order("ID asc").Preload("Horarios.Dia").Preload("Horarios.Abrir").Preload("Horarios.Cerrar").Preload("Comuna.Ciudad.Region.Pais").Joins("LEFT JOIN ferreteria_horario fh ON ferreteria.id = fh.ferreteria_id").Find(&ferreteria, id).Error
+func getFerreteria(ferreteria *models.Ferreteria, id string, gdb *gorm.DB) *gorm.DB {
+	return gdb.Model(&models.Ferreteria{}).Order("ID asc").Preload("Horarios.Dia").Preload("Horarios.Abrir").Preload("Horarios.Cerrar").Preload("Comuna.Ciudad.Region.Pais").Joins("LEFT JOIN ferreteria_horario fh ON ferreteria.id = fh.ferreteria_id").Find(&ferreteria, id)
 }
 
 func PutFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
