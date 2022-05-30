@@ -63,7 +63,17 @@ func ListFerreterias(writer http.ResponseWriter, request *http.Request, params h
 }
 
 func GetFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	gdb := database.Connect()
 
+	var ferreteria models.Ferreteria
+
+	gdb.Model(&models.Ferreteria{}).Order("ID asc").Preload("Horarios.Dia").Preload("Horarios.Abrir").Preload("Horarios.Cerrar").Preload("Comuna.Ciudad.Region.Pais").Joins("LEFT JOIN ferreteria_horario fh ON ferreteria.id = fh.ferreteria_id").Find(&ferreteria, params.ByName("id"))
+
+	writer.Header().Set("Content-Type", "application/json")
+	writer.WriteHeader(http.StatusOK)
+	json.NewEncoder(writer).Encode(ferreteria)
+
+	database.Close(gdb)
 }
 
 func PutFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
