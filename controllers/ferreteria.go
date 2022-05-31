@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/ferromarket/backend/database"
 	"github.com/ferromarket/backend/models"
@@ -99,7 +100,31 @@ func getFerreteria(ferreteria *models.Ferreteria, id string, gdb *gorm.DB) *gorm
 }
 
 func PutFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	gdb := database.Connect()
 
+	var ferreteria models.Ferreteria
+	ferreteria.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
+
+	result := putFerreteria(&ferreteria, gdb)
+	if (result.Error != nil) {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+	} else if (result.RowsAffected == 0) {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe ferreteria con id " + params.ByName("id") + "!"})
+	} else {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusOK)
+		json.NewEncoder(writer).Encode(ferreteria)
+	}
+
+	database.Close(gdb)
+}
+
+func putFerreteria(ferreteria *models.Ferreteria, gdb *gorm.DB) *gorm.DB {
+	return gdb.Save(&ferreteria)
 }
 
 func PatchFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {

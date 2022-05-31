@@ -156,3 +156,74 @@ func TestGetFerreterias(t *testing.T) {
 
 	teardown(gdb)
 }
+
+func TestPutFerreterias(t *testing.T) {
+	gdb, mock := setup(t)
+
+	ferreteria, _ := ferreteriaData()
+	ferreteria2 := ferreteria
+	ferreteria2.ID = 1
+	ferreteria3 := ferreteria
+	ferreteria3.ID = 3
+
+	mock.ExpectBegin()
+	mock.ExpectExec(
+		regexp.QuoteMeta("INSERT INTO `ferreteria` (`created_at`,`updated_at`,`deleted_at`,`nombre`,`comuna_id`,`direccion`,`descripcion`) VALUES (?,?,?,?,?,?,?)")).
+		WithArgs(utils.AnyTime{}, utils.AnyTime{}, nil, ferreteria.Nombre, ferreteria.ComunaID, ferreteria.Direccion, ferreteria.Descripcion).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
+
+	mock.ExpectBegin()
+	mock.ExpectExec(
+		regexp.QuoteMeta("UPDATE `ferreteria` SET `created_at`=?,`updated_at`=?,`deleted_at`=?,`nombre`=?,`comuna_id`=?,`direccion`=?,`descripcion`=? WHERE `ferreteria`.`deleted_at` IS NULL AND `id` = ?")).
+		WithArgs(utils.AnyTime{}, utils.AnyTime{}, nil, ferreteria2.Nombre, ferreteria2.ComunaID, ferreteria2.Direccion, ferreteria2.Descripcion, 1).
+		WillReturnResult(sqlmock.NewResult(2, 1))
+	mock.ExpectCommit()
+
+	mock.ExpectBegin()
+	mock.ExpectExec(
+		regexp.QuoteMeta("UPDATE `ferreteria` SET `created_at`=?,`updated_at`=?,`deleted_at`=?,`nombre`=?,`comuna_id`=?,`direccion`=?,`descripcion`=? WHERE `ferreteria`.`deleted_at` IS NULL AND `id` = ?")).
+		WithArgs(utils.AnyTime{}, utils.AnyTime{}, nil, ferreteria3.Nombre, ferreteria3.ComunaID, ferreteria3.Direccion, ferreteria3.Descripcion, 3).
+		WillReturnResult(sqlmock.NewResult(3, 0))
+	mock.ExpectCommit()
+
+	mock.ExpectQuery(
+		regexp.QuoteMeta("SELECT * FROM `ferreteria` WHERE `ferreteria`.`deleted_at` IS NULL AND `id` = ? LIMIT 1")).
+		WithArgs(ferreteria3.ID).
+		WillReturnRows(mock.NewRows(nil))
+
+	mock.ExpectBegin()
+	mock.ExpectExec(
+		regexp.QuoteMeta("INSERT INTO `ferreteria` (`created_at`,`updated_at`,`deleted_at`,`nombre`,`comuna_id`,`direccion`,`descripcion`,`id`) VALUES (?,?,?,?,?,?,?,?)")).
+		WithArgs(utils.AnyTime{}, utils.AnyTime{}, nil, ferreteria3.Nombre, ferreteria3.ComunaID, ferreteria3.Direccion, ferreteria3.Descripcion, 3).
+		WillReturnResult(sqlmock.NewResult(3, 1))
+	mock.ExpectCommit()
+
+	result := putFerreteria(&ferreteria, gdb)
+	if (result.Error != nil) {
+		t.Errorf("putFerreteria failed: %v", result.Error)
+	} else if (result.RowsAffected == 0) {
+		t.Errorf("putFerreteria had 0 rows")
+	}
+
+	result = putFerreteria(&ferreteria2, gdb)
+	if (result.Error != nil) {
+		t.Errorf("putFerreteria failed: %v", result.Error)
+	} else if (result.RowsAffected == 0) {
+		t.Errorf("putFerreteria had 0 rows")
+	}
+
+	result = putFerreteria(&ferreteria3, gdb)
+	if (result.Error != nil) {
+		t.Errorf("putFerreteria failed: %v", result.Error)
+	} else if (result.RowsAffected == 0) {
+		t.Errorf("putFerreteria had 0 rows")
+	}
+
+	err := mock.ExpectationsWereMet()
+	if (err != nil) {
+		t.Errorf("Failed to meet expectations, got error: %v", err)
+	}
+
+	teardown(gdb)
+}
