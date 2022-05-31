@@ -118,9 +118,7 @@ func PutFerreteria(writer http.ResponseWriter, request *http.Request, params htt
 		writer.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe ferreteria con id " + params.ByName("id") + "!"})
 	} else {
-		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusOK)
-		json.NewEncoder(writer).Encode(ferreteria)
 	}
 
 	database.Close(gdb)
@@ -156,9 +154,7 @@ func PatchFerreteria(writer http.ResponseWriter, request *http.Request, params h
 		writer.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe ferreteria con id " + params.ByName("id") + "!"})
 	} else {
-		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusOK)
-		json.NewEncoder(writer).Encode(ferreteria)
 	}
 
 	database.Close(gdb)
@@ -184,9 +180,7 @@ func DeleteFerreteria(writer http.ResponseWriter, request *http.Request, params 
 		writer.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe ferreteria con id " + params.ByName("id") + "!"})
 	} else {
-		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusOK)
-		json.NewEncoder(writer).Encode(ferreteria)
 	}
 
 	database.Close(gdb)
