@@ -103,6 +103,16 @@ func PutFerreteria(writer http.ResponseWriter, request *http.Request, params htt
 	gdb := database.Connect()
 
 	var ferreteria models.Ferreteria
+
+	decoder := json.NewDecoder(request.Body)
+
+	err := decoder.Decode(&ferreteria)
+	if (err != nil) {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+	}
+
 	ferreteria.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
 
 	result := putFerreteria(&ferreteria, gdb)
@@ -128,9 +138,73 @@ func putFerreteria(ferreteria *models.Ferreteria, gdb *gorm.DB) *gorm.DB {
 }
 
 func PatchFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	gdb := database.Connect()
 
+	var ferreteria models.Ferreteria
+
+	decoder := json.NewDecoder(request.Body)
+
+	err := decoder.Decode(&ferreteria)
+	if (err != nil) {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+	}
+
+	ferreteria.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
+
+	result := patchFerreteria(&ferreteria, gdb)
+	if (result.Error != nil) {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+	} else if (result.RowsAffected == 0) {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe ferreteria con id " + params.ByName("id") + "!"})
+	} else {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusOK)
+		json.NewEncoder(writer).Encode(ferreteria)
+	}
+
+	database.Close(gdb)
+}
+
+func patchFerreteria(ferreteria *models.Ferreteria, gdb *gorm.DB) *gorm.DB {
+	return gdb.Updates(&ferreteria)
 }
 
 func DeleteFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	gdb := database.Connect()
 
+	var ferreteria models.Ferreteria
+	ferreteria.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
+
+	result := deleteFerreteria(&ferreteria, false, gdb)
+	if (result.Error != nil) {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+	} else if (result.RowsAffected == 0) {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe ferreteria con id " + params.ByName("id") + "!"})
+	} else {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusOK)
+		json.NewEncoder(writer).Encode(ferreteria)
+	}
+
+	database.Close(gdb)
+}
+
+func deleteFerreteria(ferreteria *models.Ferreteria, hard bool, gdb *gorm.DB) *gorm.DB {
+	if (hard) {
+		// Delete the record
+		return gdb.Unscoped().Delete(&ferreteria)
+	} else {
+		// Update the "deleted_at" column
+		return gdb.Delete(&ferreteria)
+	}
 }
