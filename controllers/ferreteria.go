@@ -12,10 +12,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type Ferreterias struct {
-    Ferreterias []models.Ferreteria `json:"Ferreterias"`
-}
-
 func PostFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
 
@@ -49,7 +45,6 @@ func postFerreteria(ferreteria models.Ferreteria, gdb *gorm.DB) *gorm.DB {
 func ListFerreterias(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
 
-	ferreteriaList := Ferreterias{}
 	var ferreterias []models.Ferreteria
 
 	result := listFerreterias(&ferreterias, gdb)
@@ -58,11 +53,9 @@ func ListFerreterias(writer http.ResponseWriter, request *http.Request, params h
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
 	} else {
-		ferreteriaList.Ferreterias = ferreterias
-
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusOK)
-		json.NewEncoder(writer).Encode(ferreteriaList)
+		json.NewEncoder(writer).Encode(ferreterias)
 	}
 
 	database.Close(gdb)
