@@ -227,3 +227,75 @@ func TestPutFerreterias(t *testing.T) {
 
 	teardown(gdb)
 }
+
+func TestPatchFerreterias(t *testing.T) {
+	gdb, mock := setup(t)
+
+	ferreteria := models.Ferreteria{
+		Nombre: "Chris's hardware Updated",
+	}
+	ferreteria.ID = 1
+
+	mock.ExpectBegin()
+	mock.ExpectExec(
+		regexp.QuoteMeta("UPDATE `ferreteria` SET `updated_at`=?,`nombre`=? WHERE `ferreteria`.`deleted_at` IS NULL AND `id` = ?")).
+		WithArgs(utils.AnyTime{}, ferreteria.Nombre, ferreteria.ID).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
+
+	result := patchFerreteria(&ferreteria, gdb)
+	if (result.Error != nil) {
+		t.Errorf("patchFerreteria failed: %v", result.Error)
+	} else if (result.RowsAffected == 0) {
+		t.Errorf("patchFerreteria had 0 rows")
+	}
+
+	err := mock.ExpectationsWereMet()
+	if (err != nil) {
+		t.Errorf("Failed to meet expectations, got error: %v", err)
+	}
+
+	teardown(gdb)
+}
+
+func TestDeleteFerreterias(t *testing.T) {
+	gdb, mock := setup(t)
+
+	ferreteria, _ := ferreteriaData()
+	ferreteria.ID = 1
+
+	mock.ExpectBegin()
+	mock.ExpectExec(
+		regexp.QuoteMeta("DELETE FROM `ferreteria` WHERE `ferreteria`.`id` = ?")).
+		WithArgs(ferreteria.ID).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
+
+	mock.ExpectBegin()
+	mock.ExpectExec(
+		regexp.QuoteMeta("UPDATE `ferreteria` SET `deleted_at`=? WHERE `ferreteria`.`id` = ? AND `ferreteria`.`deleted_at` IS NULL")).
+		WithArgs(utils.AnyTime{}, ferreteria.ID).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
+
+	result := deleteFerreteria(&ferreteria, true, gdb)
+	if (result.Error != nil) {
+		t.Errorf("deleteFerreteria failed: %v", result.Error)
+	} else if (result.RowsAffected == 0) {
+		t.Errorf("deleteFerreteria had 0 rows")
+	}
+
+	result = deleteFerreteria(&ferreteria, false, gdb)
+	if (result.Error != nil) {
+		t.Errorf("deleteFerreteria failed: %v", result.Error)
+	} else if (result.RowsAffected == 0) {
+		t.Errorf("deleteFerreteria had 0 rows")
+	}
+
+	err := mock.ExpectationsWereMet()
+	if (err != nil) {
+		t.Errorf("Failed to meet expectations, got error: %v", err)
+	}
+
+	teardown(gdb)
+}
