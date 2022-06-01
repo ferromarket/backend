@@ -29,7 +29,7 @@ func Connect() *gorm.DB {
 	}
 
 	gdb, err := gorm.Open(mysql.New(mysql.Config{
-		DSN:               dbUser + ":" + dbPass + "@tcp(" + dbHost + ")/" + dbName + "?charset=utf8mb4&parseTime=True&loc=Local",
+		DSN: dbUser + ":" + dbPass + "@tcp(" + dbHost + ")/" + dbName + "?charset=utf8mb4&parseTime=True&loc=Local",
 		DefaultStringSize: 256,
 	}), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
@@ -74,8 +74,8 @@ func DropAll(gdb *gorm.DB) {
 
 func Populate(gdb *gorm.DB) {
 	ferreteria := models.Ferreteria{
-		Nombre:      "Chris's Hardware Store",
-		Direccion:   "Canto del Valle 1777",
+		Nombre: "Chris's Hardware Store",
+		Direccion: "Canto del Valle 1777",
 		Descripcion: "Buy something here!",
 		Comuna: models.Comuna{
 			Nombre: "Hualpen",
@@ -132,21 +132,21 @@ func Populate(gdb *gorm.DB) {
 	horarios := []models.FerreteriaHorario{
 		{
 			FerreteriaID: 1,
-			DiaID:        1,
-			AbrirID:      9,
-			CerrarID:     22,
+			DiaID: 1,
+			AbrirID: 9,
+			CerrarID: 22,
 		},
 	}
 
 	usuario := models.Usuario{
-		RUT:             "191208815",
-		Contrasena:      "123dds",
-		Email:           "ejemplo@gmail.com",
-		Nombres:         "Juan Sebastian",
+		RUT: "191208815",
+		Contrasena: "123dds",
+		Email: "ejemplo@gmail.com",
+		Nombres: "Juan Sebastian",
 		ApellidoPaterno: "Soto",
 		ApellidoMaterno: "Perez",
-		Telefono:        34666354,
-		Direccion:       "Falsa 1234",
+		Telefono: 34666354,
+		Direccion: "Falsa 1234",
 		FechaNacimiento: time.Now(),
 	}
 
