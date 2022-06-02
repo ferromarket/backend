@@ -9,26 +9,26 @@ import (
 	"gorm.io/gorm/schema"
 )
 
-func Connect() (*gorm.DB) {
+func Connect() *gorm.DB {
 	dbUser, exists := os.LookupEnv("MYSQL_USER")
-    if !exists {
-        dbUser = "user"
-    }
-    dbPass, exists := os.LookupEnv("MYSQL_PASSWORD")
-    if !exists {
-        dbPass = "pass"
-    }
-    dbHost, exists := os.LookupEnv("MYSQL_HOST_IP")
-    if !exists {
-        dbHost = "localhost"
-    }
-    dbName, exists := os.LookupEnv("MYSQL_DATABASE")
-    if !exists {
-        dbName = "ferromarket"
+	if !exists {
+		dbUser = "user"
+	}
+	dbPass, exists := os.LookupEnv("MYSQL_PASSWORD")
+	if !exists {
+		dbPass = "pass"
+	}
+	dbHost, exists := os.LookupEnv("MYSQL_HOST_IP")
+	if !exists {
+		dbHost = "localhost"
+	}
+	dbName, exists := os.LookupEnv("MYSQL_DATABASE")
+	if !exists {
+		dbName = "ferromarket"
 	}
 
 	gdb, err := gorm.Open(mysql.New(mysql.Config{
-		DSN: dbUser + ":" + dbPass + "@tcp(" + dbHost + ")/" + dbName + "?charset=utf8mb4&parseTime=True&loc=Local",
+		DSN:               dbUser + ":" + dbPass + "@tcp(" + dbHost + ")/" + dbName + "?charset=utf8mb4&parseTime=True&loc=Local",
 		DefaultStringSize: 256,
 	}), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
@@ -53,7 +53,11 @@ func AutoMigrate(gdb *gorm.DB) {
 	gdb.AutoMigrate(&models.Region{})
 	gdb.AutoMigrate(&models.Vehiculo{})
 	gdb.AutoMigrate(&models.Repartidor{})
-	gdb.AutoMigrate(&models.Usuario{})
+	gdb.AutoMigrate(&models.Producto{})
+	gdb.AutoMigrate(&models.Categoria{})
+	gdb.AutoMigrate(&models.Especificacion{})
+	gdb.AutoMigrate(&models.EspecificacionData{})
+	gdb.AutoMigrate(&models.EspecificacionNombre{})
 }
 
 func DropAll(gdb *gorm.DB) {
@@ -68,13 +72,18 @@ func DropAll(gdb *gorm.DB) {
 		&models.FerreteriaHorario{},
 		&models.Usuario{},
 		&models.Repartidor{},
-		&models.Usuario{})
+		&models.Usuario{},
+		&models.Producto{},
+		&models.Categoria{},
+		&models.Especificacion{},
+		&models.EspecificacionData{},
+		&models.EspecificacionNombre{})
 }
 
 func Populate(gdb *gorm.DB) {
 	ferreteria := models.Ferreteria{
-		Nombre: "Chris's Hardware Store",
-		Direccion: "Canto del Valle 1777",
+		Nombre:      "Chris's Hardware Store",
+		Direccion:   "Canto del Valle 1777",
 		Descripcion: "Buy something here!",
 		Comuna: models.Comuna{
 			Nombre: "Hualpen",
@@ -131,9 +140,9 @@ func Populate(gdb *gorm.DB) {
 	horarios := []models.FerreteriaHorario{
 		{
 			FerreteriaID: 1,
-			DiaID: 1,
-			AbrirID: 9,
-			CerrarID: 22,
+			DiaID:        1,
+			AbrirID:      9,
+			CerrarID:     22,
 		},
 	}
 
