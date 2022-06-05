@@ -11,22 +11,22 @@ import (
 type Date time.Time // 2006-01-02
 type DateTime time.Time // 2006-01-02 15:04:05
 
-func (j *Date) UnmarshalJSON(b []byte) error {
+func (date *Date) UnmarshalJSON(b []byte) error {
 	s := strings.Trim(string(b), "\"")
 	t, err := time.Parse("2006-01-02", s)
 	if (err != nil) {
 		return err
 	}
-	*j = Date(t)
+	*date = Date(t)
 	return nil
 }
 
-func (j Date) MarshalJSON() ([]byte, error) {
-    return json.Marshal(time.Time(j))
+func (date Date) MarshalJSON() ([]byte, error) {
+    return json.Marshal(time.Time(date))
 }
 
-func (j Date) Format(s string) string {
-    t := time.Time(j)
+func (date Date) Format(s string) string {
+    t := time.Time(date)
     return t.Format(s)
 }
 
@@ -53,22 +53,22 @@ func (date *Date) GobDecode(b []byte) error {
 	return (*time.Time)(date).GobDecode(b)
 }
 
-func (j *DateTime) UnmarshalJSON(b []byte) error {
+func (dateTime *DateTime) UnmarshalJSON(b []byte) error {
 	s := strings.Trim(string(b), "\"")
 	t, err := time.Parse("2006-01-02 15:04:05", s)
 	if (err != nil) {
 		return err
 	}
-	*j = DateTime(t)
+	*dateTime = DateTime(t)
 	return nil
 }
 
-func (j DateTime) MarshalJSON() ([]byte, error) {
-    return json.Marshal(time.Time(j))
+func (dateTime DateTime) MarshalJSON() ([]byte, error) {
+    return json.Marshal(time.Time(dateTime))
 }
 
-func (j DateTime) Format(s string) string {
-    t := time.Time(j)
+func (dateTime DateTime) Format(s string) string {
+    t := time.Time(dateTime)
     return t.Format(s)
 }
 
