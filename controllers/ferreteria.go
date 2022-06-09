@@ -28,6 +28,14 @@ func PostFerreteria(writer http.ResponseWriter, request *http.Request, params ht
 		return
 	}
 
+	err = ferreteria.Validate()
+	if (err != nil) {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		return
+	}
+
 	result := postFerreteria(ferreteria, gdb)
 	if (result.Error != nil) {
 		writer.Header().Set("Content-Type", "application/json")
@@ -113,6 +121,14 @@ func PutFerreteria(writer http.ResponseWriter, request *http.Request, params htt
 		return
 	}
 
+	err = ferreteria.Validate()
+	if (err != nil) {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		return
+	}
+
 	ferreteria.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
 
 	result := putFerreteria(&ferreteria, gdb)
@@ -145,6 +161,14 @@ func PatchFerreteria(writer http.ResponseWriter, request *http.Request, params h
 	decoder := json.NewDecoder(request.Body)
 
 	err := decoder.Decode(&ferreteria)
+	if (err != nil) {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		return
+	}
+
+	err = ferreteria.Validate()
 	if (err != nil) {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
