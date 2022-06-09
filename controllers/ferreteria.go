@@ -14,6 +14,7 @@ import (
 
 func PostFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
+	defer database.Close(gdb)
 
 	decoder := json.NewDecoder(request.Body)
 
@@ -24,6 +25,7 @@ func PostFerreteria(writer http.ResponseWriter, request *http.Request, params ht
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		return
 	}
 
 	result := postFerreteria(ferreteria, gdb)
@@ -34,8 +36,6 @@ func PostFerreteria(writer http.ResponseWriter, request *http.Request, params ht
 	} else {
 		writer.WriteHeader(http.StatusOK)
 	}
-
-	database.Close(gdb)
 }
 
 func postFerreteria(ferreteria models.Ferreteria, gdb *gorm.DB) *gorm.DB {
@@ -44,6 +44,7 @@ func postFerreteria(ferreteria models.Ferreteria, gdb *gorm.DB) *gorm.DB {
 
 func ListFerreterias(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
+	defer database.Close(gdb)
 
 	var ferreterias []models.Ferreteria
 
@@ -57,8 +58,6 @@ func ListFerreterias(writer http.ResponseWriter, request *http.Request, params h
 		writer.WriteHeader(http.StatusOK)
 		json.NewEncoder(writer).Encode(ferreterias)
 	}
-
-	database.Close(gdb)
 }
 
 func listFerreterias(ferreterias *[]models.Ferreteria, gdb *gorm.DB) *gorm.DB {
@@ -67,6 +66,7 @@ func listFerreterias(ferreterias *[]models.Ferreteria, gdb *gorm.DB) *gorm.DB {
 
 func GetFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
+	defer database.Close(gdb)
 
 	var ferreteria models.Ferreteria
 
@@ -84,8 +84,6 @@ func GetFerreteria(writer http.ResponseWriter, request *http.Request, params htt
 		writer.WriteHeader(http.StatusOK)
 		json.NewEncoder(writer).Encode(ferreteria)
 	}
-
-	database.Close(gdb)
 }
 
 func getFerreteria(ferreteria *models.Ferreteria, id string, gdb *gorm.DB) *gorm.DB {
@@ -94,6 +92,7 @@ func getFerreteria(ferreteria *models.Ferreteria, id string, gdb *gorm.DB) *gorm
 
 func PutFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
+	defer database.Close(gdb)
 
 	var ferreteria models.Ferreteria
 
@@ -120,8 +119,6 @@ func PutFerreteria(writer http.ResponseWriter, request *http.Request, params htt
 	} else {
 		writer.WriteHeader(http.StatusOK)
 	}
-
-	database.Close(gdb)
 }
 
 func putFerreteria(ferreteria *models.Ferreteria, gdb *gorm.DB) *gorm.DB {
@@ -130,6 +127,7 @@ func putFerreteria(ferreteria *models.Ferreteria, gdb *gorm.DB) *gorm.DB {
 
 func PatchFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
+	defer database.Close(gdb)
 
 	var ferreteria models.Ferreteria
 
@@ -156,8 +154,6 @@ func PatchFerreteria(writer http.ResponseWriter, request *http.Request, params h
 	} else {
 		writer.WriteHeader(http.StatusOK)
 	}
-
-	database.Close(gdb)
 }
 
 func patchFerreteria(ferreteria *models.Ferreteria, gdb *gorm.DB) *gorm.DB {
@@ -166,6 +162,7 @@ func patchFerreteria(ferreteria *models.Ferreteria, gdb *gorm.DB) *gorm.DB {
 
 func DeleteFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
+	defer database.Close(gdb)
 
 	var ferreteria models.Ferreteria
 	ferreteria.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
@@ -182,8 +179,6 @@ func DeleteFerreteria(writer http.ResponseWriter, request *http.Request, params 
 	} else {
 		writer.WriteHeader(http.StatusOK)
 	}
-
-	database.Close(gdb)
 }
 
 func deleteFerreteria(ferreteria *models.Ferreteria, hard bool, gdb *gorm.DB) *gorm.DB {
