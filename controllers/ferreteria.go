@@ -22,25 +22,19 @@ func PostFerreteria(writer http.ResponseWriter, request *http.Request, params ht
 
 	err := decoder.Decode(&ferreteria)
 	if (err != nil) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	err = ferreteria.Validate()
 	if (err != nil) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	result := postFerreteria(ferreteria, gdb)
 	if (result.Error != nil) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, result.Error.Error())
 		return
 	} else {
 		writer.WriteHeader(http.StatusOK)
@@ -60,9 +54,7 @@ func ListFerreterias(writer http.ResponseWriter, request *http.Request, params h
 
 	result := listFerreterias(&ferreterias, gdb)
 	if (result.Error != nil) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, result.Error.Error())
 		return
 	} else {
 		writer.Header().Set("Content-Type", "application/json")
@@ -84,14 +76,10 @@ func GetFerreteria(writer http.ResponseWriter, request *http.Request, params htt
 
 	result := getFerreteria(&ferreteria, params.ByName("id"), gdb)
 	if (result.Error != nil) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, result.Error.Error())
 		return
 	} else if (result.RowsAffected == 0) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe ferreteria con id " + params.ByName("id") + "!"})
+		utils.JSONErrorOutput(writer, http.StatusNotFound, "No existe ferreteria con id " + params.ByName("id") + "!")
 		return
 	} else {
 		writer.Header().Set("Content-Type", "application/json")
@@ -115,17 +103,13 @@ func PutFerreteria(writer http.ResponseWriter, request *http.Request, params htt
 
 	err := decoder.Decode(&ferreteria)
 	if (err != nil) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	err = ferreteria.Validate()
 	if (err != nil) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -133,14 +117,10 @@ func PutFerreteria(writer http.ResponseWriter, request *http.Request, params htt
 
 	result := putFerreteria(&ferreteria, gdb)
 	if (result.Error != nil) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, result.Error.Error())
 		return
 	} else if (result.RowsAffected == 0) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe ferreteria con id " + params.ByName("id") + "!"})
+		utils.JSONErrorOutput(writer, http.StatusNotFound, "No existe ferreteria con id " + params.ByName("id") + "!")
 		return
 	} else {
 		writer.WriteHeader(http.StatusOK)
@@ -162,17 +142,13 @@ func PatchFerreteria(writer http.ResponseWriter, request *http.Request, params h
 
 	err := decoder.Decode(&ferreteria)
 	if (err != nil) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	err = ferreteria.Validate()
 	if (err != nil) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -180,14 +156,10 @@ func PatchFerreteria(writer http.ResponseWriter, request *http.Request, params h
 
 	result := patchFerreteria(&ferreteria, gdb)
 	if (result.Error != nil) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, result.Error.Error())
 		return
 	} else if (result.RowsAffected == 0) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe ferreteria con id " + params.ByName("id") + "!"})
+		utils.JSONErrorOutput(writer, http.StatusNotFound, "No existe ferreteria con id " + params.ByName("id") + "!")
 		return
 	} else {
 		writer.WriteHeader(http.StatusOK)
@@ -208,14 +180,10 @@ func DeleteFerreteria(writer http.ResponseWriter, request *http.Request, params 
 
 	result := deleteFerreteria(&ferreteria, false, gdb)
 	if (result.Error != nil) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, result.Error.Error())
 		return
 	} else if (result.RowsAffected == 0) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe ferreteria con id " + params.ByName("id") + "!"})
+		utils.JSONErrorOutput(writer, http.StatusNotFound, "No existe ferreteria con id " + params.ByName("id") + "!")
 		return
 	} else {
 		writer.WriteHeader(http.StatusOK)
