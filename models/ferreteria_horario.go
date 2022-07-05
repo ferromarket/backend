@@ -4,8 +4,9 @@ import "gorm.io/gorm"
 
 type FerreteriaHorario struct {
 	gorm.Model
-	FerreteriaID uint64 `json:"FerreteriaID" gorm:"primaryKey;autoIncrement:false"`
-	DiaID uint64 `json:"DiaID" gorm:"primaryKey;autoIncrement:false"`
+	FerreteriaID uint64 `json:"FerreteriaID"`
+	Ferreteria Ferreteria `json:"Ferreteria"`
+	DiaID uint64 `json:"DiaID"`
 	Dia Dia `json:"Dia"`
 	AbrirID uint64 `json:"AbrirID"`
 	Abrir Hora `json:"Abrir" gorm:"foreignKey:AbrirID"`
