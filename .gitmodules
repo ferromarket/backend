@@ -1,0 +1,3 @@
+[submodule "3rd_party/go-test-report"]
+	path = 3rd_party/go-test-report
+	url = https://github.com/vakenbolt/go-test-report.git
