@@ -181,7 +181,7 @@ func DeleteUsuario(writer http.ResponseWriter, request *http.Request, params htt
 	database.Close(gdb)
 }
 
-func deleteFerreteria(usuario *models.Usuario, hard bool, gdb *gorm.DB) *gorm.DB {
+func deleteUsuario(usuario *models.Usuario, hard bool, gdb *gorm.DB) *gorm.DB {
 	if (hard) {
 		// Delete the record
 		return gdb.Unscoped().Delete(&usuario)
