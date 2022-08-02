@@ -62,7 +62,7 @@ func ListRepartidores(writer http.ResponseWriter, request *http.Request, params 
 }
 
 func listRepartidores(repartidores *[]models.Repartidor, gdb *gorm.DB) *gorm.DB {
-	return gdb.Model(&models.Repartidor{}).Order("ID asc").Preload("Comuna.Ciudad.Region.Pais").Find(&repartidores)
+	return gdb.Model(&models.Repartidor{}).Order("ID asc").Find(&repartidores)
 }
 
 func GetRepartidor(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
