@@ -13,11 +13,11 @@ type Repartidor struct {
 	Email             string `json:"Email" gorm:"not null"`
 	Nombres           string `json:"Nombres" gorm:"not null"`
 	ApellidoPaterno   string `json:"ApellidoPaterno" gorm:"not null"`
-	ApellidoMaterno   string `json:"ApellidoMaterno" gorm:"not null"`
-	Telefono          uint32 `json:"Telefono"`
+	ApellidoMaterno   string `json:"ApellidoMaterno"`
+	Telefono          uint32 `json:"Telefono" gorm:"not null"`
 	Direccion         string `json:"Direccion" gorm:"not null"`
-	FechaNacimiento   utils.DateTime
-	FechaRegistracion utils.DateTime `json:"FechaRegistracion"`
-	TipoLicencia      uint8          `json:"TipoLicencia"`
-	FechaLicencia     utils.DateTime `json:"FechaLicencia"`
+	FechaNacimiento   utils.DateTime `json:"FechaNacimiento" gorm:"not null"`
+	FechaRegistracion utils.DateTime `json:"FechaRegistracion" gorm:"not null"`
+	TipoLicencia      uint8          `json:"TipoLicencia" gorm:"not null"`
+	FechaLicencia     utils.DateTime `json:"FechaLicencia" gorm:"not null"`
 }

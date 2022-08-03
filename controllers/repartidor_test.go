@@ -23,10 +23,10 @@ func repartidorData() (models.Repartidor, *sqlmock.Rows) {
 		ApellidoMaterno:   "Ciruela",
 		Telefono:          99834553,
 		Direccion:         "Calle falsa 123",
-		FechaNacimiento:   utils.DateTime{},
-		FechaRegistracion: utils.DateTime{},
+		FechaNacimiento:   utils.DateTimeNow(),
+		FechaRegistracion: utils.DateTimeNow(),
 		TipoLicencia:      2,
-		FechaLicencia:     utils.DateTime{},
+		FechaLicencia:     utils.DateTimeNow(),
 	}
 
 	rows := sqlmock.NewRows([]string{"id", "created_at", "updated_at", "deleted_at", "rut", "contrasena", "email", "nombres", "apellido_paterno", "apellido_materno", "telefono", "direccion", "fecha_nacimiento", "fecha_registracion", "tipo_licencia", "fecha_licencia"}).
@@ -97,7 +97,7 @@ func TestListRepartidores(t *testing.T) {
 	_, rows := repartidorData()
 
 	mock.ExpectQuery(
-		regexp.QuoteMeta("SELECT * FROM `repartidor` WHERE `repartidor`.`deleted_at` IS NULL ORDER BY ID asc")).
+		regexp.QuoteMeta("SELECT * FROM `repartidor` WHERE `repartidor`.`deleted_at` IS NOT NULL ORDER BY ID asc")).
 		WillReturnRows(rows)
 
 	var Repartidors []models.Repartidor
