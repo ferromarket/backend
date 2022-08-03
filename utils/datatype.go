@@ -53,6 +53,14 @@ func (date *Date) GobDecode(b []byte) error {
 	return (*time.Time)(date).GobDecode(b)
 }
 
+func (date Date) String() string {
+    return date.Format("2006-01-02")
+}
+
+func DateNow() Date {
+	return Date(time.Now())
+}
+
 func (dateTime *DateTime) UnmarshalJSON(b []byte) error {
 	s := strings.Trim(string(b), "\"")
 	t, err := time.Parse("2006-01-02 15:04:05", s)
@@ -93,4 +101,12 @@ func (date DateTime) GobEncode() ([]byte, error) {
 
 func (date *DateTime) GobDecode(b []byte) error {
 	return (*time.Time)(date).GobDecode(b)
+}
+
+func (dateTime DateTime) String() string {
+    return dateTime.Format("2006-01-02 15:04:05")
+}
+
+func DateTimeNow() DateTime {
+	return DateTime(time.Now())
 }
