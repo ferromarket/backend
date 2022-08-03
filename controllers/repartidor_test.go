@@ -148,21 +148,21 @@ func TestPutRepartidors(t *testing.T) {
 	mock.ExpectBegin()
 	mock.ExpectExec(
 		regexp.QuoteMeta("INSERT INTO `repartidor` (`created_at`,`updated_at`,`deleted_at`,`rut`,`contrasena`,`email`,`nombres`,`apellido_paterno`,`apellido_materno`,`telefono`,`direccion`,`fecha_nacimiento`,`fecha_registracion`,`tipo_licencia`,`fecha_licencia`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")).
-		WithArgs(utils.DateTimeNow(), utils.DateTimeNow(), nil, repartidor.RUT, repartidor.Contrasena, repartidor.Email, repartidor.Nombres, repartidor.ApellidoPaterno, repartidor.ApellidoMaterno, repartidor.Telefono, repartidor.Direccion, repartidor.FechaNacimiento, repartidor.FechaRegistracion, repartidor.TipoLicencia, repartidor.FechaLicencia).
+		WithArgs(utils.AnyTime{}, utils.AnyTime{}, nil, repartidor.RUT, repartidor.Contrasena, repartidor.Email, repartidor.Nombres, repartidor.ApellidoPaterno, repartidor.ApellidoMaterno, repartidor.Telefono, repartidor.Direccion, repartidor.FechaNacimiento, repartidor.FechaRegistracion, repartidor.TipoLicencia, repartidor.FechaLicencia).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
 	mock.ExpectBegin()
 	mock.ExpectExec(
 		regexp.QuoteMeta("UPDATE `repartidor` SET `created_at`=?,`updated_at`=?,`deleted_at`=?,`rut`=?,`contrasena`=?,`email`=?,`nombres`=?,`apellido_paterno`=?,`apellido_materno`=?,`telefono`=?,`direccion`=?,`fecha_nacimiento`=?,`fecha_registracion`=?,`tipo_licencia`=?,`fecha_licencia`=? WHERE `repartidor`.`deleted_at` IS NULL AND `id` = ?")).
-		WithArgs(utils.DateTimeNow(), utils.DateTimeNow(), nil, repartidor2.RUT, repartidor2.Contrasena, repartidor2.Email, repartidor2.Nombres, repartidor2.ApellidoPaterno, repartidor2.ApellidoMaterno, repartidor2.Telefono, repartidor2.Direccion, repartidor2.FechaNacimiento, repartidor2.FechaRegistracion, repartidor2.TipoLicencia, repartidor2.FechaLicencia, 1).
+		WithArgs(utils.AnyTime{}, utils.AnyTime{}, nil, repartidor2.RUT, repartidor2.Contrasena, repartidor2.Email, repartidor2.Nombres, repartidor2.ApellidoPaterno, repartidor2.ApellidoMaterno, repartidor2.Telefono, repartidor2.Direccion, repartidor2.FechaNacimiento, repartidor2.FechaRegistracion, repartidor2.TipoLicencia, repartidor2.FechaLicencia, 1).
 		WillReturnResult(sqlmock.NewResult(2, 1))
 	mock.ExpectCommit()
 
 	mock.ExpectBegin()
 	mock.ExpectExec(
 		regexp.QuoteMeta("UPDATE `repartidor` SET `created_at`=?,`updated_at`=?,`deleted_at`=?,`rut`=?,`contrasena`=?,`email`=?,`nombres`=?,`apellido_paterno`=?,`apellido_materno`=?,`telefono`=?,`direccion`=?,`fecha_nacimiento`=?,`fecha_registracion`=?,`tipo_licencia`=?,`fecha_licencia`=? WHERE `repartidor`.`deleted_at` IS NULL AND `id` = ?")).
-		WithArgs(utils.DateTimeNow(), utils.DateTimeNow(), nil, repartidor3.RUT, repartidor3.Contrasena, repartidor3.Email, repartidor3.Nombres, repartidor3.ApellidoPaterno, repartidor3.ApellidoMaterno, repartidor3.Telefono, repartidor3.Direccion, repartidor3.FechaNacimiento, repartidor3.FechaRegistracion, repartidor3.TipoLicencia, repartidor3.FechaLicencia, 3).
+		WithArgs(utils.AnyTime{}, utils.AnyTime{}, nil, repartidor3.RUT, repartidor3.Contrasena, repartidor3.Email, repartidor3.Nombres, repartidor3.ApellidoPaterno, repartidor3.ApellidoMaterno, repartidor3.Telefono, repartidor3.Direccion, repartidor3.FechaNacimiento, repartidor3.FechaRegistracion, repartidor3.TipoLicencia, repartidor3.FechaLicencia, 3).
 		WillReturnResult(sqlmock.NewResult(3, 0))
 	mock.ExpectCommit()
 
@@ -174,7 +174,7 @@ func TestPutRepartidors(t *testing.T) {
 	mock.ExpectBegin()
 	mock.ExpectExec(
 		regexp.QuoteMeta("INSERT INTO `repartidor` (`created_at`,`updated_at`,`deleted_at`,`rut`,`contrasena`,`email`,`nombres`,`apellido_paterno`,`apellido_materno`,`telefono`,`direccion`,`fecha_nacimiento`,`fecha_registracion`,`tipo_licencia`,`fecha_licencia`,`id`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")).
-		WithArgs(utils.DateTimeNow(), utils.DateTimeNow(), nil, repartidor3.RUT, repartidor3.Contrasena, repartidor3.Email, repartidor3.Nombres, repartidor3.ApellidoPaterno, repartidor3.ApellidoMaterno, repartidor3.Telefono, repartidor3.Direccion, repartidor3.FechaNacimiento, repartidor3.FechaRegistracion, repartidor3.TipoLicencia, repartidor3.FechaLicencia, 3).
+		WithArgs(utils.AnyTime{}, utils.AnyTime{}, nil, repartidor3.RUT, repartidor3.Contrasena, repartidor3.Email, repartidor3.Nombres, repartidor3.ApellidoPaterno, repartidor3.ApellidoMaterno, repartidor3.Telefono, repartidor3.Direccion, repartidor3.FechaNacimiento, repartidor3.FechaRegistracion, repartidor3.TipoLicencia, repartidor3.FechaLicencia, 3).
 		WillReturnResult(sqlmock.NewResult(3, 1))
 	mock.ExpectCommit()
 
