@@ -97,7 +97,7 @@ func TestListRepartidores(t *testing.T) {
 	_, rows := repartidorData()
 
 	mock.ExpectQuery(
-		regexp.QuoteMeta("SELECT * FROM `repartidor` WHERE `repartidor`.`deleted_at` IS NOT NULL ORDER BY ID asc")).
+		regexp.QuoteMeta("SELECT * FROM `repartidor` WHERE `repartidor`.`deleted_at` IS NULL ORDER BY ID asc")).
 		WillReturnRows(rows)
 
 	var Repartidors []models.Repartidor
