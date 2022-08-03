@@ -76,7 +76,7 @@ func TestPostRepartidor(t *testing.T) {
 
 	mock.ExpectExec(
 		regexp.QuoteMeta("INSERT INTO `repartidor` (`created_at`,`updated_at`,`deleted_at`,`rut`,`contrasena`,`email`,`nombres`,`apellido_paterno`,`apellido_materno`,`telefono`,`direccion`,`fecha_nacimiento`,`fecha_registracion`,`tipo_licencia`,`fecha_licencia`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")).
-		WithArgs(utils.DateTimeNow(), utils.DateTimeNow(), nil, repartidor.RUT, repartidor.Contrasena, repartidor.Email, repartidor.Nombres, repartidor.ApellidoPaterno, repartidor.ApellidoMaterno, repartidor.Telefono, repartidor.Direccion, repartidor.FechaNacimiento, repartidor.FechaRegistracion, repartidor.TipoLicencia, repartidor.FechaLicencia).
+		WithArgs(utils.AnyTime{}, utils.AnyTime{}, nil, repartidor.RUT, repartidor.Contrasena, repartidor.Email, repartidor.Nombres, repartidor.ApellidoPaterno, repartidor.ApellidoMaterno, repartidor.Telefono, repartidor.Direccion, repartidor.FechaNacimiento, repartidor.FechaRegistracion, repartidor.TipoLicencia, repartidor.FechaLicencia).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	mock.ExpectCommit()
@@ -218,7 +218,7 @@ func TestPatchRepartidors(t *testing.T) {
 	mock.ExpectBegin()
 	mock.ExpectExec(
 		regexp.QuoteMeta("UPDATE `repartidor` SET `updated_at`=?,`nombres`=? WHERE `repartidor`.`deleted_at` IS NULL AND `id` = ?")).
-		WithArgs(utils.DateTimeNow(), repartidor.Nombres, repartidor.ID).
+		WithArgs(utils.AnyTime{}, repartidor.Nombres, repartidor.ID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
@@ -253,7 +253,7 @@ func TestDeleteRepartidors(t *testing.T) {
 	mock.ExpectBegin()
 	mock.ExpectExec(
 		regexp.QuoteMeta("UPDATE `repartidor` SET `deleted_at`=? WHERE `repartidor`.`id` = ? AND `repartidor`.`deleted_at` IS NULL")).
-		WithArgs(utils.DateTimeNow(), repartidor.ID).
+		WithArgs(utils.AnyTime{}, repartidor.ID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
