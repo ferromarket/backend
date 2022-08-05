@@ -146,10 +146,34 @@ func Populate(gdb *gorm.DB) {
 		},
 	}
 
+	//	var categoriaID *uint64 = new(uint64)
+	categorias := []models.Categoria{
+		{
+			ID:     1,
+			Nombre: "Herramientas Manuales",
+		},
+		{
+			ID:     2,
+			Nombre: "Herramientas Manuales",
+		},
+	}
+
+	/* *categoriaID = 1
+	categorias = append(categorias, models.Categoria{
+		CategoriaID: categoriaID,
+		Nombre:      "Hijo",
+	})
+	*categoriaID = 2
+	categorias = append(categorias, models.Categoria{
+		CategoriaID: categoriaID,
+		Nombre:      "Hijo 2",
+	}) */
+
 	gdb.Create(&ferreteria)
 	gdb.Create(&dias)
 	gdb.Create(&horas)
 	gdb.Create(&horarios)
+	gdb.Create(&categorias)
 }
 
 func Close(gdb *gorm.DB) {
