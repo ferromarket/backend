@@ -64,7 +64,21 @@ func ListProductos(writer http.ResponseWriter, request *http.Request, params htt
 }
 
 func listProductos(productos *[]models.Producto, gdb *gorm.DB) *gorm.DB {
-	return gdb.Model(&models.Producto{}).Order("ID asc").Preload("Categoria").Find(&productos)
+	result := gdb.Model(&models.Producto{}).Order("ID asc").Preload("Categoria").Find(&productos)
+	if result.Error != nil {
+		return result
+	}
+	categoriaID := (*productos)[0].Categoria.CategoriaID
+	categoria := (*productos)[0].Categoria.Categoria
+	for ok := true; ok; ok = !(*categoriaID == 0) {
+		var nuevaCategoria models.Categoria
+		gdb.Model(&models.Categoria{}).Find(&nuevaCategoria, categoriaID)
+		categoria = &nuevaCategoria
+		*categoriaID = *nuevaCategoria.Categoria.CategoriaID
+		categoria = categoria.Categoria
+
+	}
+	return result
 }
 
 func GetProducto(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
