@@ -14,7 +14,7 @@ import (
 func Authenticate(handle httprouter.Handle) httprouter.Handle {
 	return func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 		type ErrorMessage struct {
-			ErrorMessage string `json:"error_message"`
+			ErrorMessage string `json:"ErrorMessage"`
 		}
 
 		reqToken := request.Header.Get("Authorization")
@@ -22,7 +22,7 @@ func Authenticate(handle httprouter.Handle) httprouter.Handle {
 		if len(splitToken) < 2 {
 			writer.Header().Set("Content-Type", "application/json")
 			writer.WriteHeader(http.StatusUnauthorized)
-			json.NewEncoder(writer).Encode(ErrorMessage{ErrorMessage: errors.New("no token received").Error()})
+			json.NewEncoder(writer).Encode(ErrorMessage{ErrorMessage: errors.New("no fue recibido un token").Error()})
 			return
 		}
 		tokenString := splitToken[1]

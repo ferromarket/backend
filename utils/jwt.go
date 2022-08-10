@@ -24,7 +24,7 @@ func GenerateJWT(email string, username string) (tokenString string, err error) 
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err = token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	tokenString, err = token.SignedString([]byte(getJWTSecret()))
 	return
 }
 
@@ -33,7 +33,7 @@ func ValidateToken(signedToken string) (err error) {
 		signedToken,
 		&JWTClaim{},
 		func(token *jwt.Token) (interface{}, error) {
-			return []byte(os.Getenv("JWT_SECRET")), nil
+			return []byte(getJWTSecret()), nil
 		},
 	)
 	if err != nil {
@@ -49,4 +49,12 @@ func ValidateToken(signedToken string) (err error) {
 		return
 	}
 	return
+}
+
+func getJWTSecret() string {
+	jwtSecret, exists := os.LookupEnv("JWT_SECRET")
+    if !exists {
+        jwtSecret = "jwtsecret"
+    }
+	return jwtSecret
 }
