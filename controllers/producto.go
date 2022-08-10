@@ -68,15 +68,37 @@ func listProductos(productos *[]models.Producto, gdb *gorm.DB) *gorm.DB {
 	if result.Error != nil {
 		return result
 	}
-	categoriaID := (*productos)[0].Categoria.CategoriaID
-	categoria := (*productos)[0].Categoria.Categoria
-	for ok := true; ok; ok = !(*categoriaID == 0) {
-		var nuevaCategoria models.Categoria
-		gdb.Model(&models.Categoria{}).Find(&nuevaCategoria, categoriaID)
-		categoria = &nuevaCategoria
-		*categoriaID = *nuevaCategoria.Categoria.CategoriaID
-		categoria = categoria.Categoria
 
+	for indice := range *productos {
+		(*productos)[indice].Categoria.Categoria = new(models.Categoria)
+
+		categoria := (*productos)[indice].Categoria.Categoria
+		categoriaID := *((*productos)[indice].Categoria.CategoriaID)
+
+		result = getCategorias(categoriaID, categoria, gdb)
+	}
+
+	return result
+}
+
+func getCategorias(categoriaID uint64, categoria *models.Categoria, gdb *gorm.DB) *gorm.DB {
+	var result *gorm.DB
+	for ok := true; ok; ok = !(categoriaID == 0) {
+		var nuevaCategoria models.Categoria
+		result = gdb.Model(&models.Categoria{}).Preload("Categoria").Find(&nuevaCategoria, categoriaID)
+		if result.Error != nil {
+			return result
+		}
+
+		// Creacion de lista enlazada para las categorias padre
+		*categoria = nuevaCategoria
+		if nuevaCategoria.CategoriaID != nil {
+			categoria.Categoria = new(models.Categoria)
+			categoria = categoria.Categoria
+			categoriaID = *nuevaCategoria.CategoriaID
+		} else {
+			categoriaID = 0
+		}
 	}
 	return result
 }
