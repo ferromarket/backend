@@ -15,8 +15,7 @@ type Ferreteria struct {
 	Comuna Comuna `json:"Comuna"`
 	Direccion string `json:"Direccion"`
 	Descripcion string `json:"Descripcion"`
-	Dias []Dia `json:"-" gorm:"many2many:ferreteria_horario"`
-	Horarios []FerreteriaHorario `json:"Horarios" gorm:"->"`
+	Horarios []FerreteriaHorario `json:"Horarios"`
 }
 
 func (ferreteria *Ferreteria) Validate() error {

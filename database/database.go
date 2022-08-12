@@ -43,8 +43,8 @@ func Connect() (*gorm.DB) {
 }
 
 func AutoMigrate(gdb *gorm.DB) {
-	gdb.SetupJoinTable(&models.Ferreteria{}, "Dias", &models.FerreteriaHorario{})
 	gdb.AutoMigrate(&models.Hora{})
+	gdb.AutoMigrate(&models.FerreteriaHorario{})
 	gdb.AutoMigrate(&models.Ciudad{})
 	gdb.AutoMigrate(&models.Comuna{})
 	gdb.AutoMigrate(&models.Dia{})

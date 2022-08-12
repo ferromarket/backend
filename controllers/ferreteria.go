@@ -65,7 +65,7 @@ func ListFerreterias(writer http.ResponseWriter, request *http.Request, params h
 }
 
 func listFerreterias(ferreterias *[]models.Ferreteria, gdb *gorm.DB) *gorm.DB {
-	return gdb.Model(&models.Ferreteria{}).Order("ID asc").Preload("Horarios.Dia").Preload("Horarios.Abrir").Preload("Horarios.Cerrar").Preload("Comuna.Ciudad.Region.Pais").Joins("LEFT JOIN ferreteria_horario fh ON ferreteria.id = fh.ferreteria_id").Find(&ferreterias)
+	return gdb.Model(&models.Ferreteria{}).Order("ID asc").Preload("Comuna.Ciudad.Region.Pais").Find(&ferreterias)
 }
 
 func GetFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
@@ -90,7 +90,7 @@ func GetFerreteria(writer http.ResponseWriter, request *http.Request, params htt
 }
 
 func getFerreteria(ferreteria *models.Ferreteria, id string, gdb *gorm.DB) *gorm.DB {
-	return gdb.Model(&models.Ferreteria{}).Order("ID asc").Preload("Horarios.Dia").Preload("Horarios.Abrir").Preload("Horarios.Cerrar").Preload("Comuna.Ciudad.Region.Pais").Joins("LEFT JOIN ferreteria_horario fh ON ferreteria.id = fh.ferreteria_id").Find(&ferreteria, id)
+	return gdb.Model(&models.Ferreteria{}).Order("ID asc").Preload("Comuna.Ciudad.Region.Pais").Find(&ferreteria, id)
 }
 
 func PutFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {

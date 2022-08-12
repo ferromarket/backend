@@ -96,19 +96,13 @@ func TestListFerreterias(t *testing.T) {
 	_, rows := ferreteriaData()
 
 	mock.ExpectQuery(
-		regexp.QuoteMeta("SELECT `ferreteria`.`id`,`ferreteria`.`created_at`,`ferreteria`.`updated_at`,`ferreteria`.`deleted_at`,`ferreteria`.`nombre`,`ferreteria`.`comuna_id`,`ferreteria`.`direccion`,`ferreteria`.`descripcion` FROM `ferreteria` LEFT JOIN ferreteria_horario fh ON ferreteria.id = fh.ferreteria_id WHERE `ferreteria`.`deleted_at` IS NULL ORDER BY ID asc")).
+		regexp.QuoteMeta("SELECT * FROM `ferreteria` WHERE `ferreteria`.`deleted_at` IS NULL ORDER BY ID asc")).
 		WillReturnRows(rows)
 
 	mock.ExpectQuery(
 		regexp.QuoteMeta("SELECT * FROM `comuna` WHERE `comuna`.`id` IN (?,?) AND `comuna`.`deleted_at` IS NULL")).
 		WithArgs(1, 2).
 		WillReturnRows(mock.NewRows([]string{"id"}).
-			AddRow(1))
-
-	mock.ExpectQuery(
-		regexp.QuoteMeta("SELECT * FROM `ferreteria_horario` WHERE `ferreteria_horario`.`ferreteria_id` IN (?,?) AND `ferreteria_horario`.`deleted_at` IS NULL")).
-		WithArgs(1, 2).
-		WillReturnRows(mock.NewRows([]string{"ferreteria_id"}).
 			AddRow(1))
 
 	var ferreterias []models.Ferreteria
@@ -128,17 +122,12 @@ func TestGetFerreterias(t *testing.T) {
 	ferreteria, rows := ferreteriaData()
 
 	mock.ExpectQuery(
-		regexp.QuoteMeta("SELECT `ferreteria`.`id`,`ferreteria`.`created_at`,`ferreteria`.`updated_at`,`ferreteria`.`deleted_at`,`ferreteria`.`nombre`,`ferreteria`.`comuna_id`,`ferreteria`.`direccion`,`ferreteria`.`descripcion` FROM `ferreteria` LEFT JOIN ferreteria_horario fh ON ferreteria.id = fh.ferreteria_id WHERE `ferreteria`.`id` = ? AND `ferreteria`.`deleted_at` IS NULL ORDER BY ID asc")).
+		regexp.QuoteMeta("SELECT * FROM `ferreteria` WHERE `ferreteria`.`id` = ? AND `ferreteria`.`deleted_at` IS NULL ORDER BY ID asc")).
 		WithArgs("1").
 		WillReturnRows(rows)
 
 	mock.ExpectQuery(
 		regexp.QuoteMeta("SELECT * FROM `comuna` WHERE `comuna`.`id` = ? AND `comuna`.`deleted_at` IS NULL")).
-		WithArgs(1).
-		WillReturnRows(mock.NewRows(nil))
-
-	mock.ExpectQuery(
-		regexp.QuoteMeta("SELECT * FROM `ferreteria_horario` WHERE `ferreteria_horario`.`ferreteria_id` = ? AND `ferreteria_horario`.`deleted_at` IS NULL")).
 		WithArgs(1).
 		WillReturnRows(mock.NewRows(nil))
 
