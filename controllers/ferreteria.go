@@ -14,6 +14,7 @@ import (
 
 func PostFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
+	defer database.Close(gdb)
 
 	decoder := json.NewDecoder(request.Body)
 
@@ -21,21 +22,24 @@ func PostFerreteria(writer http.ResponseWriter, request *http.Request, params ht
 
 	err := decoder.Decode(&ferreteria)
 	if (err != nil) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = ferreteria.Validate()
+	if (err != nil) {
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, err.Error())
+		return
 	}
 
 	result := postFerreteria(ferreteria, gdb)
 	if (result.Error != nil) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, result.Error.Error())
+		return
 	} else {
 		writer.WriteHeader(http.StatusOK)
+		return
 	}
-
-	database.Close(gdb)
 }
 
 func postFerreteria(ferreteria models.Ferreteria, gdb *gorm.DB) *gorm.DB {
@@ -44,21 +48,20 @@ func postFerreteria(ferreteria models.Ferreteria, gdb *gorm.DB) *gorm.DB {
 
 func ListFerreterias(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
+	defer database.Close(gdb)
 
 	var ferreterias []models.Ferreteria
 
 	result := listFerreterias(&ferreterias, gdb)
 	if (result.Error != nil) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, result.Error.Error())
+		return
 	} else {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusOK)
 		json.NewEncoder(writer).Encode(ferreterias)
+		return
 	}
-
-	database.Close(gdb)
 }
 
 func listFerreterias(ferreterias *[]models.Ferreteria, gdb *gorm.DB) *gorm.DB {
@@ -67,25 +70,23 @@ func listFerreterias(ferreterias *[]models.Ferreteria, gdb *gorm.DB) *gorm.DB {
 
 func GetFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
+	defer database.Close(gdb)
 
 	var ferreteria models.Ferreteria
 
 	result := getFerreteria(&ferreteria, params.ByName("id"), gdb)
 	if (result.Error != nil) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, result.Error.Error())
+		return
 	} else if (result.RowsAffected == 0) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe ferreteria con id " + params.ByName("id") + "!"})
+		utils.JSONErrorOutput(writer, http.StatusNotFound, "No existe ferreteria con id " + params.ByName("id") + "!")
+		return
 	} else {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusOK)
 		json.NewEncoder(writer).Encode(ferreteria)
+		return
 	}
-
-	database.Close(gdb)
 }
 
 func getFerreteria(ferreteria *models.Ferreteria, id string, gdb *gorm.DB) *gorm.DB {
@@ -94,6 +95,7 @@ func getFerreteria(ferreteria *models.Ferreteria, id string, gdb *gorm.DB) *gorm
 
 func PutFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
+	defer database.Close(gdb)
 
 	var ferreteria models.Ferreteria
 
@@ -101,27 +103,29 @@ func PutFerreteria(writer http.ResponseWriter, request *http.Request, params htt
 
 	err := decoder.Decode(&ferreteria)
 	if (err != nil) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = ferreteria.Validate()
+	if (err != nil) {
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, err.Error())
+		return
 	}
 
 	ferreteria.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
 
 	result := putFerreteria(&ferreteria, gdb)
 	if (result.Error != nil) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, result.Error.Error())
+		return
 	} else if (result.RowsAffected == 0) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe ferreteria con id " + params.ByName("id") + "!"})
+		utils.JSONErrorOutput(writer, http.StatusNotFound, "No existe ferreteria con id " + params.ByName("id") + "!")
+		return
 	} else {
 		writer.WriteHeader(http.StatusOK)
+		return
 	}
-
-	database.Close(gdb)
 }
 
 func putFerreteria(ferreteria *models.Ferreteria, gdb *gorm.DB) *gorm.DB {
@@ -130,6 +134,7 @@ func putFerreteria(ferreteria *models.Ferreteria, gdb *gorm.DB) *gorm.DB {
 
 func PatchFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
+	defer database.Close(gdb)
 
 	var ferreteria models.Ferreteria
 
@@ -137,27 +142,29 @@ func PatchFerreteria(writer http.ResponseWriter, request *http.Request, params h
 
 	err := decoder.Decode(&ferreteria)
 	if (err != nil) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = ferreteria.Validate()
+	if (err != nil) {
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, err.Error())
+		return
 	}
 
 	ferreteria.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
 
 	result := patchFerreteria(&ferreteria, gdb)
 	if (result.Error != nil) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, result.Error.Error())
+		return
 	} else if (result.RowsAffected == 0) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe ferreteria con id " + params.ByName("id") + "!"})
+		utils.JSONErrorOutput(writer, http.StatusNotFound, "No existe ferreteria con id " + params.ByName("id") + "!")
+		return
 	} else {
 		writer.WriteHeader(http.StatusOK)
+		return
 	}
-
-	database.Close(gdb)
 }
 
 func patchFerreteria(ferreteria *models.Ferreteria, gdb *gorm.DB) *gorm.DB {
@@ -166,24 +173,22 @@ func patchFerreteria(ferreteria *models.Ferreteria, gdb *gorm.DB) *gorm.DB {
 
 func DeleteFerreteria(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
+	defer database.Close(gdb)
 
 	var ferreteria models.Ferreteria
 	ferreteria.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
 
 	result := deleteFerreteria(&ferreteria, false, gdb)
 	if (result.Error != nil) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, result.Error.Error())
+		return
 	} else if (result.RowsAffected == 0) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe ferreteria con id " + params.ByName("id") + "!"})
+		utils.JSONErrorOutput(writer, http.StatusNotFound, "No existe ferreteria con id " + params.ByName("id") + "!")
+		return
 	} else {
 		writer.WriteHeader(http.StatusOK)
+		return
 	}
-
-	database.Close(gdb)
 }
 
 func deleteFerreteria(ferreteria *models.Ferreteria, hard bool, gdb *gorm.DB) *gorm.DB {

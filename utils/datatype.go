@@ -22,12 +22,12 @@ func (date *Date) UnmarshalJSON(b []byte) error {
 }
 
 func (date Date) MarshalJSON() ([]byte, error) {
-    return json.Marshal(time.Time(date))
+	return json.Marshal(time.Time(date))
 }
 
 func (date Date) Format(s string) string {
-    t := time.Time(date)
-    return t.Format(s)
+	t := time.Time(date)
+	return t.Format(s)
 }
 
 func (date *Date) Scan(value interface{}) (err error) {
@@ -72,12 +72,12 @@ func (dateTime *DateTime) UnmarshalJSON(b []byte) error {
 }
 
 func (dateTime DateTime) MarshalJSON() ([]byte, error) {
-    return json.Marshal(time.Time(dateTime))
+	return json.Marshal(time.Time(dateTime))
 }
 
 func (dateTime DateTime) Format(s string) string {
-    t := time.Time(dateTime)
-    return t.Format(s)
+	t := time.Time(dateTime)
+	return t.Format(s)
 }
 
 func (date *DateTime) Scan(value interface{}) (err error) {
