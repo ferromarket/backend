@@ -72,23 +72,197 @@ func DropAll(gdb *gorm.DB) {
 }
 
 func Populate(gdb *gorm.DB) {
-	ferreteria := models.Ferreteria{
-		Nombre: "Chris's Hardware Store",
-		Direccion: "Canto del Valle 1777",
-		Descripcion: "Buy something here!",
-		Comuna: models.Comuna{
-			Nombre: "Hualpen",
-			Ciudad: models.Ciudad{
-				Nombre: "Concepción",
-				Region: models.Region{
-					Nombre: "Bío Bío",
-					Codigo: "VIII",
-					Pais: models.Pais{
-						Nombre: "Chile",
-						Codigo: "CL",
-					},
-				},
-			},
+	populateFerreteria(gdb)
+}
+
+func populateFerreteria(gdb *gorm.DB) {
+	pais := models.Pais{
+		ID: 1,
+		Nombre: "Chile",
+		Codigo: "CL",
+	}
+
+	regiones := []models.Region{
+		/*{
+			ID: 1,
+			Nombre: "Tarapacá",
+			Codigo: "I",
+			PaisID: 1,
+		},
+		{
+			ID: 2,
+			Nombre: "Antofagasta",
+			Codigo: "II",
+			PaisID: 1,
+		},
+		{
+			ID: 3,
+			Nombre: "Atacama",
+			Codigo: "III",
+			PaisID: 1,
+		},
+		{
+			ID: 4,
+			Nombre: "Coquimbo",
+			Codigo: "IV",
+			PaisID: 1,
+		},
+		{
+			ID: 5,
+			Nombre: "Valparaíso",
+			Codigo: "V",
+			PaisID: 1,
+		},
+		{
+			ID: 6,
+			Nombre: "Libertador Gral. B.",
+			Codigo: "VI",
+			PaisID: 1,
+		},
+		{
+			ID: 7,
+			Nombre: "Maule",
+			Codigo: "VII",
+			PaisID: 1,
+		},*/
+		{
+			ID: 8,
+			Nombre: "Bíobío",
+			Codigo: "VIII",
+			PaisID: 1,
+		},
+		/*{
+			ID: 9,
+			Nombre: "La Araucanía",
+			Codigo: "IX",
+			PaisID: 1,
+		},
+		{
+			ID: 10,
+			Nombre: "Los Lagos",
+			Codigo: "X",
+			PaisID: 1,
+		},
+		{
+			ID: 11,
+			Nombre: "Aysén del General Carlos",
+			Codigo: "XI",
+			PaisID: 1,
+		},
+		{
+			ID: 12,
+			Nombre: "Magallanes y de la Antártica",
+			Codigo: "XII",
+			PaisID: 1,
+		},
+		{
+			ID: 13,
+			Nombre: "Metropolitana de Santiago",
+			Codigo: "RM",
+			PaisID: 1,
+		},
+		{
+			ID: 14,
+			Nombre: "Los Ríos",
+			Codigo: "XIV",
+			PaisID: 1,
+		},
+		{
+			ID: 15,
+			Nombre: "Arica Parinacota",
+			Codigo: "XV",
+			PaisID: 1,
+		},*/
+	}
+
+	ciudades := []models.Ciudad{
+		{
+			ID: 1,
+			Nombre: "Concepción",
+			RegionID: 8,
+		},
+		{
+			ID: 2,
+			Nombre: "Chillán",
+			RegionID: 8,
+		},
+		{
+			ID: 3,
+			Nombre: "Talcahuano",
+			RegionID: 8,
+		},
+	}
+
+	comunas := []models.Comuna{
+		{
+			ID: 1,
+			Nombre: "Concepción",
+			CiudadID: 1,
+		},
+		{
+			ID: 2,
+			Nombre: "Coronel",
+			CiudadID: 1,
+		},
+		{
+			ID: 3,
+			Nombre: "Chiguayante",
+			CiudadID: 1,
+		},
+		{
+			ID: 4,
+			Nombre: "Florida",
+			CiudadID: 1,
+		},
+		{
+			ID: 5,
+			Nombre: "Hualpén",
+			CiudadID: 1,
+		},
+		{
+			ID: 6,
+			Nombre: "Hualqui",
+			CiudadID: 1,
+		},
+		{
+			ID: 7,
+			Nombre: "Lota",
+			CiudadID: 1,
+		},
+		{
+			ID: 8,
+			Nombre: "Penco",
+			CiudadID: 1,
+		},
+		{
+			ID: 9,
+			Nombre: "San Pedro de la Paz",
+			CiudadID: 1,
+		},
+		{
+			ID: 10,
+			Nombre: "Santa Juana",
+			CiudadID: 1,
+		},
+		{
+			ID: 11,
+			Nombre: "Tomé",
+			CiudadID: 1,
+		},
+		{
+			ID: 12,
+			Nombre: "Talcahuano",
+			CiudadID: 3,
+		},
+		{
+			ID: 13,
+			Nombre: "Chillán",
+			CiudadID: 2,
+		},
+		{
+			ID: 14,
+			Nombre: "Chillán Viejo",
+			CiudadID: 2,
 		},
 	}
 
@@ -128,19 +302,12 @@ func Populate(gdb *gorm.DB) {
 		{Hora: "22:00"},
 		{Hora: "23:00"}}
 
-	horarios := []models.FerreteriaHorario{
-		{
-			FerreteriaID: 1,
-			DiaID: 1,
-			AbrirID: 9,
-			CerrarID: 22,
-		},
-	}
-
-	gdb.Create(&ferreteria)
+	gdb.Create(&pais)
+	gdb.Create(&regiones)
+	gdb.Create(&ciudades)
+	gdb.Create(&comunas)
 	gdb.Create(&dias)
 	gdb.Create(&horas)
-	gdb.Create(&horarios)
 }
 
 func Close(gdb *gorm.DB) {
