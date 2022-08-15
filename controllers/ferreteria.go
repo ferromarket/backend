@@ -37,7 +37,7 @@ func PostFerreteria(writer http.ResponseWriter, request *http.Request, params ht
 		utils.JSONErrorOutput(writer, http.StatusBadRequest, result.Error.Error())
 		return
 	} else {
-		writer.WriteHeader(http.StatusOK)
+		writer.WriteHeader(http.StatusNoContent)
 		return
 	}
 }
@@ -123,7 +123,7 @@ func PutFerreteria(writer http.ResponseWriter, request *http.Request, params htt
 		utils.JSONErrorOutput(writer, http.StatusNotFound, "No existe ferreteria con id " + params.ByName("id") + "!")
 		return
 	} else {
-		writer.WriteHeader(http.StatusOK)
+		writer.WriteHeader(http.StatusNoContent)
 		return
 	}
 }
@@ -162,7 +162,7 @@ func PatchFerreteria(writer http.ResponseWriter, request *http.Request, params h
 		utils.JSONErrorOutput(writer, http.StatusNotFound, "No existe ferreteria con id " + params.ByName("id") + "!")
 		return
 	} else {
-		writer.WriteHeader(http.StatusOK)
+		writer.WriteHeader(http.StatusNoContent)
 		return
 	}
 }
@@ -186,7 +186,7 @@ func DeleteFerreteria(writer http.ResponseWriter, request *http.Request, params 
 		utils.JSONErrorOutput(writer, http.StatusNotFound, "No existe ferreteria con id " + params.ByName("id") + "!")
 		return
 	} else {
-		writer.WriteHeader(http.StatusOK)
+		writer.WriteHeader(http.StatusNoContent)
 		return
 	}
 }
