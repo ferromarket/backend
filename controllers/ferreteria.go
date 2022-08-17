@@ -82,10 +82,16 @@ func GetFerreteria(writer http.ResponseWriter, request *http.Request, params htt
 		utils.JSONErrorOutput(writer, http.StatusNotFound, "No existe ferreteria con id " + params.ByName("id") + "!")
 		return
 	} else {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusOK)
-		json.NewEncoder(writer).Encode(ferreteria)
-		return
+		result := gdb.Model(&models.FerreteriaHorario{}).Order("ID asc").Where("ferreteria_id = ?", params.ByName("id")).Find(&ferreteria.Horarios)
+		if (result.Error != nil) {
+			utils.JSONErrorOutput(writer, http.StatusBadRequest, result.Error.Error())
+			return
+		} else {
+			writer.Header().Set("Content-Type", "application/json")
+			writer.WriteHeader(http.StatusOK)
+			json.NewEncoder(writer).Encode(ferreteria)
+			return
+		}
 	}
 }
 
@@ -162,6 +168,9 @@ func PatchFerreteria(writer http.ResponseWriter, request *http.Request, params h
 		utils.JSONErrorOutput(writer, http.StatusNotFound, "No existe ferreteria con id " + params.ByName("id") + "!")
 		return
 	} else {
+		for _, horario := range ferreteria.Horarios {
+			gdb.Updates(&horario)
+		}
 		writer.WriteHeader(http.StatusNoContent)
 		return
 	}
