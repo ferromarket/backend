@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/ferromarket/backend/database"
 	"github.com/ferromarket/backend/models"
@@ -104,17 +105,132 @@ func getCategorias(categoriaID uint64, categoria *models.Categoria, gdb *gorm.DB
 }
 
 func GetProducto(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	gdb := database.Connect()
+	var producto models.Producto
+	result := getProducto(&producto, params.ByName("id"), gdb)
+	if result.Error != nil {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+	} else if result.RowsAffected == 0 {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe producto con id " + params.ByName("id") + "!"})
+	} else {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusOK)
+		json.NewEncoder(writer).Encode(producto)
+	}
 
+	database.Close(gdb)
+}
+func getProducto(Producto *models.Producto, id string, gdb *gorm.DB) *gorm.DB {
+	return gdb.Model(&models.Producto{}).Order("ID asc").Find(&Producto, id)
 }
 
 func PutProducto(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	gdb := database.Connect()
 
+	var producto models.Producto
+
+	decoder := json.NewDecoder(request.Body)
+
+	err := decoder.Decode(&producto)
+	if err != nil {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+	}
+
+	producto.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
+
+	result := putProducto(&producto, gdb)
+	if result.Error != nil {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+	} else if result.RowsAffected == 0 {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe producto con id " + params.ByName("id") + "!"})
+	} else {
+		writer.WriteHeader(http.StatusOK)
+	}
+
+	database.Close(gdb)
+}
+
+func putProducto(producto *models.Producto, gdb *gorm.DB) *gorm.DB {
+	return gdb.Save(&producto)
 }
 
 func PatchProducto(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	gdb := database.Connect()
+
+	var producto models.Producto
+
+	decoder := json.NewDecoder(request.Body)
+
+	err := decoder.Decode(&producto)
+	if err != nil {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+	}
+
+	producto.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
+
+	result := patchProducto(&producto, gdb)
+	if result.Error != nil {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+	} else if result.RowsAffected == 0 {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe producto con id " + params.ByName("id") + "!"})
+	} else {
+		writer.WriteHeader(http.StatusOK)
+	}
+
+	database.Close(gdb)
+}
+
+func patchProducto(producto *models.Producto, gdb *gorm.DB) *gorm.DB {
+	return gdb.Updates(&producto)
+}
+
+// an capsule hotel is an hotel with small rooms, just as convinient as a regular hotel
+// true - 3 true (for people who is buwsy and tired) , false, is not recommended for people who do like small spaces
+
+func DeleteProducto(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	gdb := database.Connect()
+	var producto []models.Producto
+	producto.ID, _ = strconv.ParseUint(params.ByName("ID"), 10, 64)
+
+	result := deleteProducto(&producto, false, gdb)
+	if result.Error != nil {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+	} else if result.RowsAffected == 0 {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe producto con id " + params.ByName("id") + "!"})
+	} else {
+		writer.WriteHeader(http.StatusOK)
+	}
+
+	database.Close(gdb)
 
 }
 
-func DeleteProducto(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-
+func deleteProducto(Producto *models.Producto, hard bool, gdb *gorm.DB) *gorm.DB {
+	if hard {
+		// Delete the record
+		return gdb.Unscoped().Delete(&Producto)
+	} else {
+		// Update the "deleted_at" column
+		return gdb.Delete(&Producto)
+	}
 }
