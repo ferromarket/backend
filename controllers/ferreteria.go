@@ -57,6 +57,13 @@ func ListFerreterias(writer http.ResponseWriter, request *http.Request, params h
 		utils.JSONErrorOutput(writer, http.StatusBadRequest, result.Error.Error())
 		return
 	} else {
+		for ferreteria := range(ferreterias) {
+			result := gdb.Model(&models.FerreteriaHorario{}).Order("ID asc").Preload("Abrir").Preload("Cerrar").Where("ferreteria_id = ?", ferreterias[ferreteria].ID).Find(&ferreterias[ferreteria].Horarios)
+			if (result.Error != nil) {
+				utils.JSONErrorOutput(writer, http.StatusBadRequest, result.Error.Error())
+				return
+			} 
+		}
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusOK)
 		json.NewEncoder(writer).Encode(ferreterias)
