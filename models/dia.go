@@ -20,8 +20,5 @@ func (dia *Dia) Validate() error {
 	if (len(dia.Nombre) > 9) {
 		return errors.New("nombre está demasiado largo")
 	}
-	if dia.ID <= 0 {
-		return errors.New("ID invalido")
-	}
 	return nil
 }
