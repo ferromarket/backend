@@ -200,12 +200,9 @@ func patchProducto(producto *models.Producto, gdb *gorm.DB) *gorm.DB {
 	return gdb.Updates(&producto)
 }
 
-// an capsule hotel is an hotel with small rooms, just as convinient as a regular hotel
-// true - 3 true (for people who is buwsy and tired) , false, is not recommended for people who do like small spaces
-
 func DeleteProducto(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
-	var producto []models.Producto
+	var producto models.Producto
 	producto.ID, _ = strconv.ParseUint(params.ByName("ID"), 10, 64)
 
 	result := deleteProducto(&producto, false, gdb)
