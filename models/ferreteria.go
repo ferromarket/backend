@@ -28,5 +28,21 @@ func (ferreteria *Ferreteria) Validate() error {
 	if (len(strings.TrimSpace(ferreteria.Descripcion)) == 0) {
 		return errors.New("descripción vacío")
 	}
+	if ferreteria.ID <= 0 {
+		return errors.New("ID invalido")
+	}
+	if ferreteria.ComunaID <= 0 {
+		return errors.New("ComunaID invalido")
+	}
+	err := ferreteria.Comuna.Validate()
+	if err != nil {
+		return err
+	}
+	for _, horario := range(ferreteria.Horarios) {
+		err = horario.Validate()
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
