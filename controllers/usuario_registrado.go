@@ -12,10 +12,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type Usuarios struct {
-	Usuarios []models.Usuario `json:"Usuario"`
-}
-
 func PostUsuario(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
 
@@ -48,6 +44,10 @@ func postUsuario(usuario models.Usuario, gdb *gorm.DB) error {
 
 func ListUsuarios(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
+
+	type Usuarios struct {
+		Usuarios []models.Usuario `json:"Usuario"`
+	}
 
 	usuarioList := Usuarios{}
 	var usuarios []models.Usuario
