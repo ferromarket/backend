@@ -20,8 +20,5 @@ func (hora *Hora) Validate() error {
 	if (len(hora.Hora) > 5) {
 		return errors.New("hora está demasiado largo")
 	}
-	if hora.ID <= 0 {
-		return errors.New("ID invalido")
-	}
 	return nil
 }

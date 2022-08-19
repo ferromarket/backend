@@ -26,15 +26,5 @@ func (region *Region) Validate() error {
 	if (len(region.Codigo) > 4) {
 		return errors.New("código está demasiado grande")
 	}
-	if region.ID <= 0 {
-		return errors.New("ID invalido")
-	}
-	if region.PaisID <= 0 {
-		return errors.New("PaisID invalido")
-	}
-	err := region.Pais.Validate()
-	if err != nil {
-		return err
-	}
 	return nil
 }

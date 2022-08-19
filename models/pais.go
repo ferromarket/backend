@@ -24,8 +24,5 @@ func (pais *Pais) Validate() error {
 	if (len(pais.Codigo) > 2) {
 		return errors.New("código está demasiado grande")
 	}
-	if pais.ID <= 0 {
-		return errors.New("ID invalido")
-	}
 	return nil
 }
