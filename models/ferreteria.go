@@ -1,6 +1,11 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"errors"
+	"strings"
+
+	"gorm.io/gorm"
+)
 
 type Ferreteria struct {
 	gorm.Model
@@ -11,4 +16,17 @@ type Ferreteria struct {
 	Direccion string `json:"Direccion"`
 	Descripcion string `json:"Descripcion"`
 	Horarios []FerreteriaHorario `json:"Horarios"`
+}
+
+func (ferreteria *Ferreteria) Validate() error {
+	if (len(strings.TrimSpace(ferreteria.Nombre)) == 0) {
+		return errors.New("nombre vacío")
+	}
+	if (len(strings.TrimSpace(ferreteria.Direccion)) == 0) {
+		return errors.New("dirección vacío")
+	}
+	if (len(strings.TrimSpace(ferreteria.Descripcion)) == 0) {
+		return errors.New("descripción vacío")
+	}
+	return nil
 }

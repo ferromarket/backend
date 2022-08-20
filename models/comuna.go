@@ -1,6 +1,11 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"errors"
+	"strings"
+
+	"gorm.io/gorm"
+)
 
 type Comuna struct {
 	gorm.Model
@@ -8,4 +13,11 @@ type Comuna struct {
 	CiudadID uint64 `json:"CiudadID"`
 	Ciudad Ciudad `json:"Ciudad"`
 	Nombre string `json:"Nombre" gorm:"unique;not null"`
+}
+
+func (comuna *Comuna) Validate() error {
+	if (len(strings.TrimSpace(comuna.Nombre)) == 0) {
+		return errors.New("nombre vacío")
+	}
+	return nil
 }

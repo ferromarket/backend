@@ -72,75 +72,242 @@ func DropAll(gdb *gorm.DB) {
 }
 
 func Populate(gdb *gorm.DB) {
-	ferreteria := models.Ferreteria{
-		Nombre: "Chris's Hardware Store",
-		Direccion: "Canto del Valle 1777",
-		Descripcion: "Buy something here!",
-		Comuna: models.Comuna{
-			Nombre: "Hualpen",
-			Ciudad: models.Ciudad{
-				Nombre: "Concepción",
-				Region: models.Region{
-					Nombre: "Bío Bío",
-					Codigo: "VIII",
-					Pais: models.Pais{
-						Nombre: "Chile",
-						Codigo: "CL",
-					},
-				},
-			},
+	populateFerreteria(gdb)
+}
+
+func populateFerreteria(gdb *gorm.DB) {
+	pais := models.Pais{
+		ID: 1,
+		Nombre: "Chile",
+		Codigo: "CL",
+	}
+
+	regiones := []models.Region{
+		/*{
+			ID: 1,
+			Nombre: "Tarapacá",
+			Codigo: "I",
+			PaisID: 1,
+		},
+		{
+			ID: 2,
+			Nombre: "Antofagasta",
+			Codigo: "II",
+			PaisID: 1,
+		},
+		{
+			ID: 3,
+			Nombre: "Atacama",
+			Codigo: "III",
+			PaisID: 1,
+		},
+		{
+			ID: 4,
+			Nombre: "Coquimbo",
+			Codigo: "IV",
+			PaisID: 1,
+		},
+		{
+			ID: 5,
+			Nombre: "Valparaíso",
+			Codigo: "V",
+			PaisID: 1,
+		},
+		{
+			ID: 6,
+			Nombre: "Libertador Gral. B.",
+			Codigo: "VI",
+			PaisID: 1,
+		},
+		{
+			ID: 7,
+			Nombre: "Maule",
+			Codigo: "VII",
+			PaisID: 1,
+		},*/
+		{
+			ID: 8,
+			Nombre: "Bíobío",
+			Codigo: "VIII",
+			PaisID: 1,
+		},
+		/*{
+			ID: 9,
+			Nombre: "La Araucanía",
+			Codigo: "IX",
+			PaisID: 1,
+		},
+		{
+			ID: 10,
+			Nombre: "Los Lagos",
+			Codigo: "X",
+			PaisID: 1,
+		},
+		{
+			ID: 11,
+			Nombre: "Aysén del General Carlos",
+			Codigo: "XI",
+			PaisID: 1,
+		},
+		{
+			ID: 12,
+			Nombre: "Magallanes y de la Antártica",
+			Codigo: "XII",
+			PaisID: 1,
+		},
+		{
+			ID: 13,
+			Nombre: "Metropolitana de Santiago",
+			Codigo: "RM",
+			PaisID: 1,
+		},
+		{
+			ID: 14,
+			Nombre: "Los Ríos",
+			Codigo: "XIV",
+			PaisID: 1,
+		},
+		{
+			ID: 15,
+			Nombre: "Arica Parinacota",
+			Codigo: "XV",
+			PaisID: 1,
+		},*/
+	}
+
+	ciudades := []models.Ciudad{
+		{
+			ID: 1,
+			Nombre: "Concepción",
+			RegionID: 8,
+		},
+		{
+			ID: 2,
+			Nombre: "Chillán",
+			RegionID: 8,
+		},
+		{
+			ID: 3,
+			Nombre: "Talcahuano",
+			RegionID: 8,
+		},
+	}
+
+	comunas := []models.Comuna{
+		{
+			ID: 1,
+			Nombre: "Concepción",
+			CiudadID: 1,
+		},
+		{
+			ID: 2,
+			Nombre: "Coronel",
+			CiudadID: 1,
+		},
+		{
+			ID: 3,
+			Nombre: "Chiguayante",
+			CiudadID: 1,
+		},
+		{
+			ID: 4,
+			Nombre: "Florida",
+			CiudadID: 1,
+		},
+		{
+			ID: 5,
+			Nombre: "Hualpén",
+			CiudadID: 1,
+		},
+		{
+			ID: 6,
+			Nombre: "Hualqui",
+			CiudadID: 1,
+		},
+		{
+			ID: 7,
+			Nombre: "Lota",
+			CiudadID: 1,
+		},
+		{
+			ID: 8,
+			Nombre: "Penco",
+			CiudadID: 1,
+		},
+		{
+			ID: 9,
+			Nombre: "San Pedro de la Paz",
+			CiudadID: 1,
+		},
+		{
+			ID: 10,
+			Nombre: "Santa Juana",
+			CiudadID: 1,
+		},
+		{
+			ID: 11,
+			Nombre: "Tomé",
+			CiudadID: 1,
+		},
+		{
+			ID: 12,
+			Nombre: "Talcahuano",
+			CiudadID: 3,
+		},
+		{
+			ID: 13,
+			Nombre: "Chillán",
+			CiudadID: 2,
+		},
+		{
+			ID: 14,
+			Nombre: "Chillán Viejo",
+			CiudadID: 2,
 		},
 	}
 
 	dias := []models.Dia{
-		{Nombre: "Lunes"},
-		{Nombre: "Martes"},
-		{Nombre: "Miércoles"},
-		{Nombre: "Jueves"},
-		{Nombre: "Viernes"},
-		{Nombre: "Sábado"},
-		{Nombre: "Domingo"},
+		{ID: 1, Nombre: "Lunes"},
+		{ID: 2, Nombre: "Martes"},
+		{ID: 3, Nombre: "Miércoles"},
+		{ID: 4, Nombre: "Jueves"},
+		{ID: 5, Nombre: "Viernes"},
+		{ID: 6, Nombre: "Sábado"},
+		{ID: 7, Nombre: "Domingo"},
 	}
 
 	horas := []models.Hora{
-		{Hora: "00:00"},
-		{Hora: "01:00"},
-		{Hora: "02:00"},
-		{Hora: "03:00"},
-		{Hora: "04:00"},
-		{Hora: "05:00"},
-		{Hora: "06:00"},
-		{Hora: "07:00"},
-		{Hora: "08:00"},
-		{Hora: "09:00"},
-		{Hora: "10:00"},
-		{Hora: "11:00"},
-		{Hora: "12:00"},
-		{Hora: "13:00"},
-		{Hora: "14:00"},
-		{Hora: "15:00"},
-		{Hora: "16:00"},
-		{Hora: "17:00"},
-		{Hora: "18:00"},
-		{Hora: "19:00"},
-		{Hora: "20:00"},
-		{Hora: "21:00"},
-		{Hora: "22:00"},
-		{Hora: "23:00"}}
+		{ID: 1, Hora: "00:00"},
+		{ID: 2, Hora: "01:00"},
+		{ID: 3, Hora: "02:00"},
+		{ID: 4, Hora: "03:00"},
+		{ID: 5, Hora: "04:00"},
+		{ID: 6, Hora: "05:00"},
+		{ID: 7, Hora: "06:00"},
+		{ID: 8, Hora: "07:00"},
+		{ID: 9, Hora: "08:00"},
+		{ID: 10, Hora: "09:00"},
+		{ID: 11, Hora: "10:00"},
+		{ID: 12, Hora: "11:00"},
+		{ID: 13, Hora: "12:00"},
+		{ID: 14, Hora: "13:00"},
+		{ID: 15, Hora: "14:00"},
+		{ID: 16, Hora: "15:00"},
+		{ID: 17, Hora: "16:00"},
+		{ID: 18, Hora: "17:00"},
+		{ID: 19, Hora: "18:00"},
+		{ID: 20, Hora: "19:00"},
+		{ID: 21, Hora: "20:00"},
+		{ID: 22, Hora: "21:00"},
+		{ID: 23, Hora: "22:00"},
+		{ID: 24, Hora: "23:00"}}
 
-	horarios := []models.FerreteriaHorario{
-		{
-			FerreteriaID: 1,
-			DiaID: 1,
-			AbrirID: 9,
-			CerrarID: 22,
-		},
-	}
-
-	gdb.Create(&ferreteria)
+	gdb.Create(&pais)
+	gdb.Create(&regiones)
+	gdb.Create(&ciudades)
+	gdb.Create(&comunas)
 	gdb.Create(&dias)
 	gdb.Create(&horas)
-	gdb.Create(&horarios)
 }
 
 func Close(gdb *gorm.DB) {

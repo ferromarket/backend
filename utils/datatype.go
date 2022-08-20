@@ -22,12 +22,12 @@ func (date *Date) UnmarshalJSON(b []byte) error {
 }
 
 func (date Date) MarshalJSON() ([]byte, error) {
-    return json.Marshal(time.Time(date))
+	return json.Marshal(time.Time(date))
 }
 
 func (date Date) Format(s string) string {
-    t := time.Time(date)
-    return t.Format(s)
+	t := time.Time(date)
+	return t.Format(s)
 }
 
 func (date *Date) Scan(value interface{}) (err error) {
@@ -53,6 +53,14 @@ func (date *Date) GobDecode(b []byte) error {
 	return (*time.Time)(date).GobDecode(b)
 }
 
+func (date Date) String() string {
+    return date.Format("2006-01-02")
+}
+
+func DateNow() Date {
+	return Date(time.Now())
+}
+
 func (dateTime *DateTime) UnmarshalJSON(b []byte) error {
 	s := strings.Trim(string(b), "\"")
 	t, err := time.Parse("2006-01-02 15:04:05", s)
@@ -64,12 +72,12 @@ func (dateTime *DateTime) UnmarshalJSON(b []byte) error {
 }
 
 func (dateTime DateTime) MarshalJSON() ([]byte, error) {
-    return json.Marshal(time.Time(dateTime))
+	return json.Marshal(time.Time(dateTime))
 }
 
 func (dateTime DateTime) Format(s string) string {
-    t := time.Time(dateTime)
-    return t.Format(s)
+	t := time.Time(dateTime)
+	return t.Format(s)
 }
 
 func (date *DateTime) Scan(value interface{}) (err error) {
@@ -93,4 +101,12 @@ func (date DateTime) GobEncode() ([]byte, error) {
 
 func (date *DateTime) GobDecode(b []byte) error {
 	return (*time.Time)(date).GobDecode(b)
+}
+
+func (dateTime DateTime) String() string {
+    return dateTime.Format("2006-01-02 15:04:05")
+}
+
+func DateTimeNow() DateTime {
+	return DateTime(time.Now())
 }
