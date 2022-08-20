@@ -108,6 +108,14 @@ func TestDateString(t *testing.T) {
 	}
 }
 
+func TestDateNow(t *testing.T) {
+	var want = time.Now()
+	msg := DateNow()
+	if (msg.String() != want.String()[:10]) {
+		t.Fatalf(`DateTimeNow() = %q, want match for %q, nil`, msg.String(), want.String()[:10])
+	}
+}
+
 func TestDateTimeUnmarshalJSON(t *testing.T) {
 	want := "1985-02-23 12:13:14 +0000 UTC"
 	var dateTime DateTime
@@ -207,5 +215,13 @@ func TestDateTimeString(t *testing.T) {
 	msg := reflect.TypeOf(dateTime.String()).Kind()
 	if (msg != want) {
 		t.Fatalf(`dateTime.String() is not of type %q, received %q`, want.String(), msg.String())
+	}
+}
+
+func TestDateTimeNow(t *testing.T) {
+	var want = time.Now()
+	msg := DateTimeNow()
+	if (msg.String() != want.String()[:19]) {
+		t.Fatalf(`DateTimeNow() = %q, want match for %q, nil`, msg.String(), want.String()[:19])
 	}
 }
