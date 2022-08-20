@@ -98,6 +98,16 @@ func TestDateGobDecode(t *testing.T) {
 	}
 }
 
+func TestDateString(t *testing.T) {
+	var want = reflect.String
+	parsed, _ := time.Parse("2006-01-02", "2006-01-02")
+	var date Date = Date(parsed)
+	msg := reflect.TypeOf(date.String()).Kind()
+	if (msg != want) {
+		t.Fatalf(`date.String() is not of type %q, received %q`, want.String(), msg.String())
+	}
+}
+
 func TestDateTimeUnmarshalJSON(t *testing.T) {
 	want := "1985-02-23 12:13:14 +0000 UTC"
 	var dateTime DateTime
@@ -187,5 +197,15 @@ func TestDateTimeGobDecode(t *testing.T) {
 	msg := dateTime.Format("2006-01-02T15:04:05Z07:00")
 	if (string(msg) != want) {
 		t.Fatalf(`dateTime.GobDecode([]byte()) = %q, %v, want match for %#q, nil`, msg, err, want)
+	}
+}
+
+func TestDateTimeString(t *testing.T) {
+	var want = reflect.String
+	parsed, _ := time.Parse("2006-01-02", "2006-01-02")
+	var dateTime DateTime = DateTime(parsed)
+	msg := reflect.TypeOf(dateTime.String()).Kind()
+	if (msg != want) {
+		t.Fatalf(`dateTime.String() is not of type %q, received %q`, want.String(), msg.String())
 	}
 }
