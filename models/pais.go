@@ -21,7 +21,7 @@ func (pais *Pais) Validate() error {
 	if (len(strings.TrimSpace(pais.Codigo)) == 0) {
 		return errors.New("código vacío")
 	}
-	if (len(pais.Codigo) > 2) {
+	if (len([]rune(pais.Codigo)) > 2) {
 		return errors.New("código demasiado grande")
 	}
 	return nil
