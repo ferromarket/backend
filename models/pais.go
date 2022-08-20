@@ -16,13 +16,13 @@ type Pais struct {
 
 func (pais *Pais) Validate() error {
 	if (len(strings.TrimSpace(pais.Nombre)) == 0) {
-		return errors.New("nombre está vacío")
+		return errors.New("nombre vacío")
 	}
 	if (len(strings.TrimSpace(pais.Codigo)) == 0) {
-		return errors.New("código está vacío")
+		return errors.New("código vacío")
 	}
 	if (len(pais.Codigo) > 2) {
-		return errors.New("código está demasiado grande")
+		return errors.New("código demasiado grande")
 	}
 	return nil
 }
