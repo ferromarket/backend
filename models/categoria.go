@@ -17,7 +17,7 @@ type Categoria struct {
 
 func (Categoria *Categoria) Validate() error {
 	if len(strings.TrimSpace(Categoria.Nombre)) == 0 {
-		return errors.New("nombre categoria vacia")
+		return errors.New("categoria nombre vacia")
 	}
 	return nil
 }

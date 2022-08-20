@@ -15,7 +15,7 @@ type EspecificacionNombre struct {
 
 func (EspecificacionNombre *EspecificacionNombre) Validate() error {
 	if len(strings.TrimSpace(EspecificacionNombre.Nombre)) == 0 {
-		return errors.New("especificacion nombre")
+		return errors.New("especificacion nombre vacio")
 	}
 	return nil
 }
