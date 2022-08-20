@@ -100,8 +100,8 @@ func TestListRepartidores(t *testing.T) {
 		regexp.QuoteMeta("SELECT * FROM `repartidor` WHERE `repartidor`.`deleted_at` IS NULL ORDER BY ID asc")).
 		WillReturnRows(rows)
 
-	var Repartidors []models.Repartidor
-	listRepartidores(&Repartidors, gdb)
+	var Repartidores []models.Repartidor
+	listRepartidores(&Repartidores, gdb)
 
 	err := mock.ExpectationsWereMet()
 	if err != nil {
