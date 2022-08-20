@@ -1,8 +1,7 @@
 package models
 
 import (
-	"time"
-
+	"github.com/ferromarket/backend/utils"
 	"gorm.io/gorm"
 )
 
@@ -11,10 +10,10 @@ type Vehiculo struct {
 	ID uint64 `json:"ID" gorm:"primaryKey"`
 	RepartidorID uint64 `json:"RepartidorID"`
 	Repartidor Repartidor `json:"Repartidor"`
-	Tipo uint8 `json:"Tipo"`
+	Patente string `json:"Patente"`
 	Marca string `json:"Marca"`
 	Modelo string `json:"Modelo"`
 	Ano uint16 `json:"Ano"`
-	PermisoCirculacion time.Time `json:"PermisoCirculacion"`
-	Seguro time.Time `json:"Seguro"`
+	PermisoCirculacion utils.Date `json:"PermisoCirculacion"`
+	Seguro utils.Date `json:"Seguro"`
 }
