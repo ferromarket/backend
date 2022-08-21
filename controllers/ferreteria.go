@@ -32,7 +32,7 @@ func PostFerreteria(writer http.ResponseWriter, request *http.Request, params ht
 		return
 	}
 
-	result := postFerreteria(ferreteria, gdb)
+	result := postFerreteria(&ferreteria, gdb)
 	if (result.Error != nil) {
 		utils.JSONErrorOutput(writer, http.StatusBadRequest, result.Error.Error())
 		return
@@ -44,7 +44,7 @@ func PostFerreteria(writer http.ResponseWriter, request *http.Request, params ht
 	}
 }
 
-func postFerreteria(ferreteria models.Ferreteria, gdb *gorm.DB) *gorm.DB {
+func postFerreteria(ferreteria *models.Ferreteria, gdb *gorm.DB) *gorm.DB {
 	return gdb.Create(&ferreteria)
 }
 
