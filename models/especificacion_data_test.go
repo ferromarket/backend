@@ -3,9 +3,9 @@ package models
 import "testing"
 
 func TestEspecificacionDataEmptyName(t *testing.T) {
-	especificacionnombre := EspecificacionNombre{Nombre: ""}
-	want := "especificacion nombre vacio"
-	err := especificacionnombre.Validate()
+	especificaciondata := EspecificacionData{Valor: ""}
+	want := "especificacion data vacio"
+	err := especificaciondata.Validate()
 	if err == nil || err.Error() != want {
 		t.Fatalf(`EspecificacionNombre.Validate() = %v, want match for %#q, nil`, err, want)
 	}
