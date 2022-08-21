@@ -1,6 +1,8 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type FerreteriaHorario struct {
 	gorm.Model
@@ -12,4 +14,8 @@ type FerreteriaHorario struct {
 	Abrir Hora `json:"Abrir" gorm:"foreignKey:AbrirID"`
 	CerrarID uint64 `json:"CerrarID"`
 	Cerrar Hora `json:"Cerrar" gorm:"foreignKey:CerrarID"`
+}
+
+func (ferreteria_horario *FerreteriaHorario) Validate() error {
+	return nil
 }
