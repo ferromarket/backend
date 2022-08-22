@@ -74,7 +74,10 @@ func listProductos(productos *[]models.Producto, gdb *gorm.DB) *gorm.DB {
 		(*productos)[indice].Categoria.Categoria = new(models.Categoria)
 
 		categoria := (*productos)[indice].Categoria.Categoria
-		categoriaID := *((*productos)[indice].Categoria.CategoriaID)
+		var categoriaID uint64 = 0
+		if (*productos)[indice].Categoria.CategoriaID != nil {
+			categoriaID = *((*productos)[indice].Categoria.CategoriaID)
+		}
 
 		result = getCategorias(categoriaID, categoria, gdb)
 	}
@@ -203,7 +206,7 @@ func patchProducto(producto *models.Producto, gdb *gorm.DB) *gorm.DB {
 func DeleteProducto(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
 	var producto models.Producto
-	producto.ID, _ = strconv.ParseUint(params.ByName("ID"), 10, 64)
+	producto.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
 
 	result := deleteProducto(&producto, false, gdb)
 	if result.Error != nil {
