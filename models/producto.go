@@ -7,5 +7,5 @@ type Producto struct {
 	ID          uint64    `json:"ID" gorm:"primaryKey"`
 	CategoriaID uint64    `json:"CategoriaID" gorm:"not null"`
 	Categoria   Categoria `json:"Categoria"`
-	Nombre      string    `json:"Producto" gorm:"not null"`
+	Nombre      string    `json:"Nombre" gorm:"not null"`
 }
