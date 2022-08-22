@@ -32,7 +32,7 @@ func PostFerreteria(writer http.ResponseWriter, request *http.Request, params ht
 		return
 	}
 
-	result := postFerreteria(ferreteria, gdb)
+	result := postFerreteria(&ferreteria, gdb)
 	if (result.Error != nil) {
 		utils.JSONErrorOutput(writer, http.StatusBadRequest, result.Error.Error())
 		return
@@ -44,7 +44,7 @@ func PostFerreteria(writer http.ResponseWriter, request *http.Request, params ht
 	}
 }
 
-func postFerreteria(ferreteria models.Ferreteria, gdb *gorm.DB) *gorm.DB {
+func postFerreteria(ferreteria *models.Ferreteria, gdb *gorm.DB) *gorm.DB {
 	return gdb.Create(&ferreteria)
 }
 
@@ -60,7 +60,7 @@ func ListFerreterias(writer http.ResponseWriter, request *http.Request, params h
 		return
 	} else {
 		for ferreteria := range(ferreterias) {
-			result := gdb.Model(&models.FerreteriaHorario{}).Order("ID asc").Preload("Abrir").Preload("Cerrar").Where("ferreteria_id = ?", ferreterias[ferreteria].ID).Find(&ferreterias[ferreteria].Horarios)
+			result := gdb.Model(&models.FerreteriaHorario{}).Order("ID asc").Preload("Dia").Preload("Abrir").Preload("Cerrar").Where("ferreteria_id = ?", ferreterias[ferreteria].ID).Find(&ferreterias[ferreteria].Horarios)
 			if (result.Error != nil) {
 				utils.JSONErrorOutput(writer, http.StatusBadRequest, result.Error.Error())
 				return
@@ -91,7 +91,7 @@ func GetFerreteria(writer http.ResponseWriter, request *http.Request, params htt
 		utils.JSONErrorOutput(writer, http.StatusNotFound, "No existe ferreteria con id " + params.ByName("id") + "!")
 		return
 	} else {
-		result := gdb.Model(&models.FerreteriaHorario{}).Order("ID asc").Where("ferreteria_id = ?", params.ByName("id")).Find(&ferreteria.Horarios)
+		result := gdb.Model(&models.FerreteriaHorario{}).Order("ID asc").Preload("Dia").Preload("Abrir").Preload("Cerrar").Where("ferreteria_id = ?", params.ByName("id")).Find(&ferreteria.Horarios)
 		if (result.Error != nil) {
 			utils.JSONErrorOutput(writer, http.StatusBadRequest, result.Error.Error())
 			return
