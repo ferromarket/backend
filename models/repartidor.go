@@ -18,6 +18,6 @@ type Repartidor struct {
 	Direccion         string `json:"Direccion" gorm:"not null"`
 	FechaNacimiento   utils.DateTime `json:"FechaNacimiento" gorm:"not null"`
 	FechaRegistracion utils.DateTime `json:"FechaRegistracion" gorm:"not null"`
-	TipoLicencia      uint8          `json:"TipoLicencia" gorm:"not null"`
+	TipoLicencia      string          `json:"TipoLicencia" gorm:"not null"`
 	FechaLicencia     utils.DateTime `json:"FechaLicencia" gorm:"not null"`
 }
