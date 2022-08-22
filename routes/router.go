@@ -15,6 +15,7 @@ func Initialize() *httprouter.Router {
 	router.GET("/", index)
 	RepartidorRoutes(router)
 	FerreteriaRoutes(router)
+	UsuarioRoutes(router)
 	RegionRoutes(router)
 	CiudadRoutes(router)
 	ComunaRoutes(router)

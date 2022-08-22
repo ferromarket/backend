@@ -15,9 +15,9 @@ type Hora struct {
 
 func (hora *Hora) Validate() error {
 	if (len(strings.TrimSpace(hora.Hora)) == 0) {
-		return errors.New("nombre vacío")
+		return errors.New("hora vacío")
 	}
-	if (len(hora.Hora) > 5) {
+	if (len([]rune(hora.Hora)) > 5) {
 		return errors.New("hora está demasiado largo")
 	}
 	return nil

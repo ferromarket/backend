@@ -17,7 +17,7 @@ func (dia *Dia) Validate() error {
 	if (len(strings.TrimSpace(dia.Nombre)) == 0) {
 		return errors.New("nombre vacío")
 	}
-	if (len(dia.Nombre) > 9) {
+	if (len([]rune(dia.Nombre)) > 9) {
 		return errors.New("nombre está demasiado largo")
 	}
 	return nil
