@@ -80,7 +80,7 @@ func TestPostFerreteria(t *testing.T) {
 
 	mock.ExpectCommit()
 
-	postFerreteria(ferreteria, gdb)
+	postFerreteria(&ferreteria, gdb)
 
 	err := mock.ExpectationsWereMet()
 	if (err != nil) {

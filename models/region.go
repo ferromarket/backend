@@ -21,10 +21,10 @@ func (region *Region) Validate() error {
 		return errors.New("nombre vacío")
 	}
 	if (len(strings.TrimSpace(region.Codigo)) == 0) {
-		return errors.New("código está vacío")
+		return errors.New("código vacío")
 	}
-	if (len(region.Codigo) > 4) {
-		return errors.New("código está demasiado grande")
+	if (len([]rune(region.Codigo)) > 4) {
+		return errors.New("código demasiado grande")
 	}
 	return nil
 }
