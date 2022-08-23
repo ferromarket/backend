@@ -23,15 +23,15 @@ func repartidorData() (models.Repartidor, *sqlmock.Rows) {
 		ApellidoMaterno:   "Ciruela",
 		Telefono:          99834553,
 		Direccion:         "Calle falsa 123",
-		FechaNacimiento:   utils.DateTimeNow(),
-		FechaRegistracion: utils.DateTimeNow(),
+		FechaNacimiento:   utils.DateNow(),
+		FechaRegistracion: utils.DateNow(),
 		TipoLicencia:      "A",
-		FechaLicencia:     utils.DateTimeNow(),
+		FechaLicencia:     utils.DateNow(),
 	}
 
 	rows := sqlmock.NewRows([]string{"id", "created_at", "updated_at", "deleted_at", "rut", "contrasena", "email", "nombres", "apellido_paterno", "apellido_materno", "telefono", "direccion", "fecha_nacimiento", "fecha_registracion", "tipo_licencia", "fecha_licencia"}).
-		AddRow("1", utils.DateTimeNow(), utils.DateTimeNow(), nil, repartidor.RUT, repartidor.Contrasena, repartidor.Email, repartidor.Nombres, repartidor.ApellidoPaterno, repartidor.ApellidoMaterno, repartidor.Telefono, repartidor.Direccion, repartidor.FechaNacimiento, repartidor.FechaRegistracion, repartidor.TipoLicencia, repartidor.FechaLicencia).
-		AddRow("2", utils.DateTimeNow(), utils.DateTimeNow(), nil, repartidor.RUT+"2", repartidor.Contrasena+"2", repartidor.Email+"2", repartidor.Nombres+"2", repartidor.ApellidoPaterno+"2", repartidor.ApellidoMaterno+"2", repartidor.Telefono+2, repartidor.Direccion+"2", repartidor.FechaNacimiento, repartidor.FechaRegistracion, repartidor.TipoLicencia+"2", repartidor.FechaLicencia)
+		AddRow("1", utils.DateNow(), utils.DateNow(), nil, repartidor.RUT, repartidor.Contrasena, repartidor.Email, repartidor.Nombres, repartidor.ApellidoPaterno, repartidor.ApellidoMaterno, repartidor.Telefono, repartidor.Direccion, repartidor.FechaNacimiento, repartidor.FechaRegistracion, repartidor.TipoLicencia, repartidor.FechaLicencia).
+		AddRow("2", utils.DateNow(), utils.DateNow(), nil, repartidor.RUT+"2", repartidor.Contrasena+"2", repartidor.Email+"2", repartidor.Nombres+"2", repartidor.ApellidoPaterno+"2", repartidor.ApellidoMaterno+"2", repartidor.Telefono+2, repartidor.Direccion+"2", repartidor.FechaNacimiento, repartidor.FechaRegistracion, repartidor.TipoLicencia+"2", repartidor.FechaLicencia)
 
 	return repartidor, rows
 }
