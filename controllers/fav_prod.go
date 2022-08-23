@@ -53,7 +53,7 @@ func ListFavProd(writer http.ResponseWriter, request *http.Request, params httpr
 	var favProd []models.FavProd
 
 	gdb.Model(&models.FavProd{}).Order("ID asc").Preload("Usuario").Find(&favProd)
-//gdb.Model(&models.FavProd{}).Order("ID asc").Preload("Usuario").Preload("Producto").Find(&favProd)
+	//gdb.Model(&models.FavProd{}).Order("ID asc").Preload("Usuario").Preload("Producto").Find(&favProd)
 	favProdList.FavProd = favProd
 
 	writer.Header().Set("Content-Type", "application/json")
@@ -78,23 +78,23 @@ func GetFavProd(writer http.ResponseWriter, request *http.Request, params httpro
 }
 
 // insertar o update. Necesita el objeto completo. Todos los atributos
-func PutUsuario(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+func PutFavProd(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
 
 	decoder := json.NewDecoder(request.Body)
 
-	var usuario models.Usuario
+	var favProd models.FavProd
 
-	err := decoder.Decode(&usuario)
+	err := decoder.Decode(&favProd)
 	if err != nil {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
 	}
 
-	usuario.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
+	favProd.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
 
-	err = putUsuario(usuario, gdb)
+	err = putFavProd(favProd, gdb)
 	if err != nil {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
@@ -106,36 +106,35 @@ func PutUsuario(writer http.ResponseWriter, request *http.Request, params httpro
 	database.Close(gdb)
 }
 
-func putUsuario(usuario models.Usuario, gdb *gorm.DB) error{
-	return gdb.Save(&usuario).Error
+func putFavProd(favProd models.FavProd, gdb *gorm.DB) error {
+	return gdb.Save(&favProd).Error
 }
 
 // solo update solo para un atributo
-func PatchUsuario(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+func PatchFavProd(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	// hashClave()
 	gdb := database.Connect()
 
 	decoder := json.NewDecoder(request.Body)
 
-	var usuario models.Usuario
-
-	err := decoder.Decode(&usuario)
+	var favProd models.FavProd
+	err := decoder.Decode(&favProd)
 	if err != nil {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
 	}
 
-	usuario.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
+	favProd.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
 
-	var usuario_verif models.Usuario
+	var favProd_verif models.FavProd
 
-	result := gdb.Find(&usuario_verif, usuario.ID)
+	result := gdb.Find(&favProd_verif, favProd.ID)
 
 	if result.RowsAffected == 0 {
 		writer.WriteHeader(http.StatusNotFound)
-	}else{
-		err = patchUsuario(usuario, gdb)
+	} else {
+		err = patchFavProd(favProd, gdb)
 		if err != nil {
 			writer.Header().Set("Content-Type", "application/json")
 			writer.WriteHeader(http.StatusBadRequest)
@@ -148,17 +147,17 @@ func PatchUsuario(writer http.ResponseWriter, request *http.Request, params http
 	database.Close(gdb)
 }
 
-func patchUsuario(usuario models.Usuario, gdb *gorm.DB) error{
-	return gdb.Updates(&usuario).Error
+func patchFavProd(favProd models.FavProd, gdb *gorm.DB) error {
+	return gdb.Updates(&favProd).Error
 }
 
-func DeleteUsuario(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+func DeleteFavProd(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
 
-	var usuario models.Usuario
+	var favProd models.FavProd
 
-	usuario.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64);
-	result := deleteUsuario(&usuario, false, gdb)
+	favProd.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
+	result := deleteFavProd(&favProd, false, gdb)
 
 	if result.Error != nil {
 		writer.Header().Set("Content-Type", "application/json")
@@ -167,7 +166,7 @@ func DeleteUsuario(writer http.ResponseWriter, request *http.Request, params htt
 	} else if result.RowsAffected == 0 {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe el Usuario con ID: " + params.ByName("id") + "!"})
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe el Producto con ID: " + params.ByName("id") + "!"})
 	} else {
 		writer.WriteHeader(http.StatusOK)
 	}
@@ -175,12 +174,12 @@ func DeleteUsuario(writer http.ResponseWriter, request *http.Request, params htt
 	database.Close(gdb)
 }
 
-func deleteUsuario(usuario *models.Usuario, hard bool, gdb *gorm.DB) *gorm.DB {
-	if (hard) {
+func deleteFavProd(favProd *models.FavProd, hard bool, gdb *gorm.DB) *gorm.DB {
+	if hard {
 		// Delete the record
-		return gdb.Unscoped().Delete(&usuario)
+		return gdb.Unscoped().Delete(&favProd)
 	} else {
 		// Update the "deleted_at" column
-		return gdb.Delete(&usuario)
+		return gdb.Delete(&favProd)
 	}
 }
