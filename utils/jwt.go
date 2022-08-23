@@ -11,7 +11,7 @@ import (
 type JWTClaim struct {
 	ID string `json:"id"`
 	Rut string `json:"rut"`
-	Email    string `json:"email"`
+	Email string `json:"email"`
 	jwt.RegisteredClaims
 }
 
