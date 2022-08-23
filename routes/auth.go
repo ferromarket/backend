@@ -8,5 +8,5 @@ import (
 
 func AuthRoutes(router *httprouter.Router) {
 	router.POST("/login", controllers.Login)
-	router.GET("/auth", middlewares.Authenticate(controllers.AuthenticateUser))
+	router.POST("/auth", middlewares.Authenticate(controllers.AuthenticateUser))
 }
