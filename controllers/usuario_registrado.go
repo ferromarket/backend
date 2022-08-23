@@ -25,6 +25,7 @@ func PostUsuario(writer http.ResponseWriter, request *http.Request, params httpr
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
 	}
+	usuario.HashPassword(usuario.Contrasena);
 
 	err = postUsuario(usuario, gdb)
 	if err != nil {
@@ -57,7 +58,7 @@ func ListUsuarios(writer http.ResponseWriter, request *http.Request, params http
 	usuarioList.Usuarios = usuarios
 
 	for i := range usuarioList.Usuarios {
-		usuarioList.Usuarios[i].Contrasena = nil
+		usuarioList.Usuarios[i].Contrasena = ""
 	}
 
 	writer.Header().Set("Content-Type", "application/json")
@@ -74,7 +75,7 @@ func GetUsuario(writer http.ResponseWriter, request *http.Request, params httpro
 
 	gdb.Model(&models.Usuario{}).Order("ID asc").Preload("Rol").Find(&usuario, params.ByName("id"))
 
-	usuario.Contrasena = nil
+	usuario.Contrasena = ""
 
 	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(http.StatusOK)
