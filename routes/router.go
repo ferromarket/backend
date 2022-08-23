@@ -13,6 +13,7 @@ import (
 func Initialize() *httprouter.Router {
 	router := httprouter.New()
 	router.GET("/", index)
+	AuthRoutes(router)
 	RepartidorRoutes(router)
 	FerreteriaRoutes(router)
 	UsuarioRoutes(router)
