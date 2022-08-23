@@ -9,16 +9,18 @@ import (
 )
 
 type JWTClaim struct {
-	Username string `json:"username"`
+	ID string `json:"id"`
+	Rut string `json:"rut"`
 	Email    string `json:"email"`
 	jwt.RegisteredClaims
 }
 
-func GenerateJWT(email string, username string) (tokenString string, err error) {
+func GenerateJWT(id string, rut string, email string) (tokenString string, err error) {
 	expirationTime := time.Now().Add(1 * time.Hour)
 	claims := &JWTClaim{
-		Email:    email,
-		Username: username,
+		ID:	id,
+		Rut: rut,
+		Email: email,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 		},

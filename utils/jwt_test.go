@@ -6,9 +6,9 @@ import (
 )
 
 func TestValidJWT(t *testing.T) {
-	token, err := GenerateJWT("user@ferromarket.cl", "username")
+	token, err := GenerateJWT("1", "123456789", "user@ferromarket.cl")
 	if err != nil {
-		t.Fatalf(`GenerateJWT("user@ferromarket.cl", "username") = failed with error %v`, err)
+		t.Fatalf(`GenerateJWT("1", "123456789", "user@ferromarket.cl") = failed with error %v`, err)
 	}
 
 	err = ValidateToken(token)
@@ -54,13 +54,13 @@ func TestWrongJWTSecret(t *testing.T) {
 }
 
 func TestJWTHeader(t *testing.T) {
-	token, err := GenerateJWT("user@ferromarket.cl", "username")
+	token, err := GenerateJWT("1", "123456789", "user@ferromarket.cl")
 	if err != nil {
-		t.Fatalf(`GenerateJWT("user@ferromarket.cl", "username") = failed with error %v`, err)
+		t.Fatalf(`GenerateJWT("1", "123456789", "user@ferromarket.cl") = failed with error %v`, err)
 	}
 
 	matched, _ := regexp.MatchString("(eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\\..*\\..*)", token)
 	if !matched {
-		t.Fatalf(`GenerateJWT("user@ferromarket.cl", "username") = failed with an invalid header`)
+		t.Fatalf(`GenerateJWT("1", "123456789", "user@ferromarket.cl") = failed with an invalid header`)
 	}
 }
