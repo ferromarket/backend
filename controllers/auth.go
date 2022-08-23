@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -39,7 +40,13 @@ func Login(writer http.ResponseWriter, request *http.Request, params httprouter.
 		return
 	}
 
-	gdb.Model(models.Usuario{}).Where(&models.Usuario{RUT: receivedUser.RUT}).Find(&user)
+	rawDecodedText, err := base64.StdEncoding.DecodeString(receivedUser.Contrasena)
+    if err != nil {
+        utils.JSONErrorOutput(writer, http.StatusBadRequest, err.Error())
+    }
+	receivedUser.Contrasena = string(rawDecodedText)
+
+	gdb.Model(models.Usuario{}).Where(&models.Usuario{Email: receivedUser.Email}).Find(&user)
 
 	err = user.CheckPassword(receivedUser.Contrasena)
 	if err != nil {
