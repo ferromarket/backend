@@ -54,7 +54,7 @@ func ListUsuarios(writer http.ResponseWriter, request *http.Request, params http
 	usuarioList := Usuarios{}
 	var usuarios []models.Usuario
 
-	gdb.Model(&models.Usuario{}).Order("ID asc").Preload("Rol").Joins("LEFT JOIN usuario_rol ur ON usuario.id = ur.usuario_id").Find(&usuarios)
+	gdb.Model(&models.Usuario{}).Order("ID asc").Find(&usuarios)
 
 	usuarioList.Usuarios = usuarios
 
@@ -73,7 +73,7 @@ func GetUsuario(writer http.ResponseWriter, request *http.Request, params httpro
 
 	var usuario models.Usuario
 
-	gdb.Model(&models.Usuario{}).Order("ID asc").Preload("Rol").Find(&usuario, params.ByName("id"))
+	gdb.Model(&models.Usuario{}).Order("ID asc").Find(&usuario, params.ByName("id"))
 
 	usuario.Contrasena = ""
 
