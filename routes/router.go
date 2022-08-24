@@ -21,6 +21,7 @@ func Initialize() *httprouter.Router {
 	CiudadRoutes(router)
 	ComunaRoutes(router)
 	HoraRoutes(router)
+	FavProdRoutes(router)
 	return router
 }
 
