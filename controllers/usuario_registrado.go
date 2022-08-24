@@ -51,20 +51,17 @@ func ListUsuarios(writer http.ResponseWriter, request *http.Request, params http
 		Usuarios []models.Usuario `json:"Usuario"`
 	}
 
-	usuarioList := Usuarios{}
 	var usuarios []models.Usuario
 
-	gdb.Model(&models.Usuario{}).Order("ID asc").Preload("Rol").Joins("LEFT JOIN usuario_rol ur ON usuario.id = ur.usuario_id").Find(&usuarios)
+	gdb.Model(&models.Usuario{}).Order("ID asc").Find(&usuarios)
 
-	usuarioList.Usuarios = usuarios
-
-	for i := range usuarioList.Usuarios {
-		usuarioList.Usuarios[i].Contrasena = ""
+	for i := range usuarios {
+		usuarios[i].Contrasena = ""
 	}
 
 	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(http.StatusOK)
-	json.NewEncoder(writer).Encode(usuarioList)
+	json.NewEncoder(writer).Encode(usuarios)
 }
 
 func GetUsuario(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
@@ -73,7 +70,7 @@ func GetUsuario(writer http.ResponseWriter, request *http.Request, params httpro
 
 	var usuario models.Usuario
 
-	gdb.Model(&models.Usuario{}).Order("ID asc").Preload("Rol").Find(&usuario, params.ByName("id"))
+	gdb.Model(&models.Usuario{}).Order("ID asc").Find(&usuario, params.ByName("id"))
 
 	usuario.Contrasena = ""
 
