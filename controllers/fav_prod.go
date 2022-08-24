@@ -80,6 +80,7 @@ func GetFavProd(writer http.ResponseWriter, request *http.Request, params httpro
 // insertar o update. Necesita el objeto completo. Todos los atributos
 func PutFavProd(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
+	defer database.Close(gdb)
 
 	decoder := json.NewDecoder(request.Body)
 
@@ -90,6 +91,7 @@ func PutFavProd(writer http.ResponseWriter, request *http.Request, params httpro
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		return
 	}
 
 	favProd.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
@@ -99,11 +101,11 @@ func PutFavProd(writer http.ResponseWriter, request *http.Request, params httpro
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		return
 	} else {
 		writer.WriteHeader(http.StatusOK)
 	}
 
-	database.Close(gdb)
 }
 
 func putFavProd(favProd models.FavProd, gdb *gorm.DB) error {
@@ -114,6 +116,7 @@ func putFavProd(favProd models.FavProd, gdb *gorm.DB) error {
 func PatchFavProd(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	// hashClave()
 	gdb := database.Connect()
+	defer database.Close(gdb)
 
 	decoder := json.NewDecoder(request.Body)
 
@@ -123,6 +126,7 @@ func PatchFavProd(writer http.ResponseWriter, request *http.Request, params http
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		return
 	}
 
 	favProd.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
@@ -139,12 +143,11 @@ func PatchFavProd(writer http.ResponseWriter, request *http.Request, params http
 			writer.Header().Set("Content-Type", "application/json")
 			writer.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+			return
 		} else {
 			writer.WriteHeader(http.StatusOK)
 		}
 	}
-
-	database.Close(gdb)
 }
 
 func patchFavProd(favProd models.FavProd, gdb *gorm.DB) error {
@@ -153,6 +156,7 @@ func patchFavProd(favProd models.FavProd, gdb *gorm.DB) error {
 
 func DeleteFavProd(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
+	defer database.Close(gdb)
 
 	var favProd models.FavProd
 
@@ -163,6 +167,7 @@ func DeleteFavProd(writer http.ResponseWriter, request *http.Request, params htt
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		return
 	} else if result.RowsAffected == 0 {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusNotFound)
@@ -170,8 +175,6 @@ func DeleteFavProd(writer http.ResponseWriter, request *http.Request, params htt
 	} else {
 		writer.WriteHeader(http.StatusOK)
 	}
-
-	database.Close(gdb)
 }
 
 func deleteFavProd(favProd *models.FavProd, hard bool, gdb *gorm.DB) *gorm.DB {

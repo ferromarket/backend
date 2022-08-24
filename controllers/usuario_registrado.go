@@ -14,6 +14,7 @@ import (
 
 func PostUsuario(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
+	defer database.Close(gdb)
 
 	decoder := json.NewDecoder(request.Body)
 
@@ -24,8 +25,9 @@ func PostUsuario(writer http.ResponseWriter, request *http.Request, params httpr
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		return
 	}
-	usuario.HashPassword(usuario.Contrasena);
+	usuario.HashPassword(usuario.Contrasena)
 
 	err = postUsuario(usuario, gdb)
 	if err != nil {
@@ -35,8 +37,6 @@ func PostUsuario(writer http.ResponseWriter, request *http.Request, params httpr
 	} else {
 		writer.WriteHeader(http.StatusOK)
 	}
-
-	database.Close(gdb)
 }
 
 func postUsuario(usuario models.Usuario, gdb *gorm.DB) error {
@@ -45,48 +45,44 @@ func postUsuario(usuario models.Usuario, gdb *gorm.DB) error {
 
 func ListUsuarios(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
+	defer database.Close(gdb)
 
 	type Usuarios struct {
 		Usuarios []models.Usuario `json:"Usuario"`
 	}
 
-	usuarioList := Usuarios{}
 	var usuarios []models.Usuario
 
-	gdb.Model(&models.Usuario{}).Order("ID asc").Preload("Rol").Joins("LEFT JOIN usuario_rol ur ON usuario.id = ur.usuario_id").Find(&usuarios)
+	gdb.Model(&models.Usuario{}).Order("ID asc").Find(&usuarios)
 
-	usuarioList.Usuarios = usuarios
-
-	for i := range usuarioList.Usuarios {
-		usuarioList.Usuarios[i].Contrasena = ""
+	for i := range usuarios {
+		usuarios[i].Contrasena = ""
 	}
 
 	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(http.StatusOK)
-	json.NewEncoder(writer).Encode(usuarioList)
-
-	database.Close(gdb)
+	json.NewEncoder(writer).Encode(usuarios)
 }
 
 func GetUsuario(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
+	defer database.Close(gdb)
 
 	var usuario models.Usuario
 
-	gdb.Model(&models.Usuario{}).Order("ID asc").Preload("Rol").Find(&usuario, params.ByName("id"))
+	gdb.Model(&models.Usuario{}).Order("ID asc").Find(&usuario, params.ByName("id"))
 
 	usuario.Contrasena = ""
 
 	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(http.StatusOK)
 	json.NewEncoder(writer).Encode(usuario)
-
-	database.Close(gdb)
 }
 
 // insertar o update. Necesita el objeto completo. Todos los atributos
 func PutUsuario(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
+	defer database.Close(gdb)
 
 	decoder := json.NewDecoder(request.Body)
 
@@ -97,6 +93,7 @@ func PutUsuario(writer http.ResponseWriter, request *http.Request, params httpro
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		return
 	}
 
 	usuario.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
@@ -109,11 +106,9 @@ func PutUsuario(writer http.ResponseWriter, request *http.Request, params httpro
 	} else {
 		writer.WriteHeader(http.StatusOK)
 	}
-
-	database.Close(gdb)
 }
 
-func putUsuario(usuario models.Usuario, gdb *gorm.DB) error{
+func putUsuario(usuario models.Usuario, gdb *gorm.DB) error {
 	return gdb.Save(&usuario).Error
 }
 
@@ -121,6 +116,7 @@ func putUsuario(usuario models.Usuario, gdb *gorm.DB) error{
 func PatchUsuario(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	// hashClave()
 	gdb := database.Connect()
+	defer database.Close(gdb)
 
 	decoder := json.NewDecoder(request.Body)
 
@@ -131,6 +127,7 @@ func PatchUsuario(writer http.ResponseWriter, request *http.Request, params http
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		return
 	}
 
 	usuario.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
@@ -141,36 +138,37 @@ func PatchUsuario(writer http.ResponseWriter, request *http.Request, params http
 
 	if result.RowsAffected == 0 {
 		writer.WriteHeader(http.StatusNotFound)
-	}else{
+	} else {
 		err = patchUsuario(usuario, gdb)
 		if err != nil {
 			writer.Header().Set("Content-Type", "application/json")
 			writer.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+			return
 		} else {
 			writer.WriteHeader(http.StatusOK)
 		}
 	}
-
-	database.Close(gdb)
 }
 
-func patchUsuario(usuario models.Usuario, gdb *gorm.DB) error{
+func patchUsuario(usuario models.Usuario, gdb *gorm.DB) error {
 	return gdb.Updates(&usuario).Error
 }
 
 func DeleteUsuario(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
+	defer database.Close(gdb)
 
 	var usuario models.Usuario
 
-	usuario.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64);
+	usuario.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
 	result := deleteUsuario(&usuario, false, gdb)
 
 	if result.Error != nil {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		return
 	} else if result.RowsAffected == 0 {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusNotFound)
@@ -178,12 +176,10 @@ func DeleteUsuario(writer http.ResponseWriter, request *http.Request, params htt
 	} else {
 		writer.WriteHeader(http.StatusOK)
 	}
-
-	database.Close(gdb)
 }
 
 func deleteUsuario(usuario *models.Usuario, hard bool, gdb *gorm.DB) *gorm.DB {
-	if (hard) {
+	if hard {
 		// Delete the record
 		return gdb.Unscoped().Delete(&usuario)
 	} else {
