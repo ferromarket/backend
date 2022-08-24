@@ -4,9 +4,10 @@ import "gorm.io/gorm"
 
 type Producto struct {
 	gorm.Model
-	ID          uint64                 `json:"ID" gorm:"primaryKey"`
-	CategoriaID uint64                 `json:"CategoriaID" gorm:"not null"`
-	Categoria   Categoria              `json:"Categoria"`
-	Nombre      string                 `json:"Nombre" gorm:"not null"`
-	NombreData  []EspecificacionNombre `json:"NombreData"`
+	ID                 uint64                 `json:"ID" gorm:"primaryKey"`
+	CategoriaID        uint64                 `json:"CategoriaID" gorm:"not null"`
+	Categoria          Categoria              `json:"Categoria"`
+	Nombre             string                 `json:"Nombre" gorm:"not null"`
+	NombreData         []EspecificacionNombre `json:"NombreData"`
+	EspecificacionData []EspecificacionData   `json:"EspecificaciobData"`
 }
