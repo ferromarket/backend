@@ -58,12 +58,7 @@ func ListProductos(writer http.ResponseWriter, request *http.Request, params htt
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
 	} else {
 		for producto := range productos {
-			result := gdb.Model(&models.EspecificacionNombre{}).Order("ID asc").Where("producto_id = ?", productos[producto].ID).Find(&productos[producto].NombreData)
-			if result.Error != nil {
-				utils.JSONErrorOutput(writer, http.StatusBadRequest, result.Error.Error())
-				return
-			}
-			result = gdb.Model(&models.EspecificacionData{}).Order("ID asc").Where("producto_id = ?", productos[producto].ID).Find(&productos[producto].EspecificacionData)
+			result := gdb.Model(&models.Especificacion{}).Order("ID asc").Where("producto_id = ?", productos[producto].ID).Preload("EspecificacionNombre").Preload("EspecificacionData").Find(&productos[producto].Especificacion)
 			if result.Error != nil {
 				utils.JSONErrorOutput(writer, http.StatusBadRequest, result.Error.Error())
 				return
@@ -121,6 +116,7 @@ func GetProducto(writer http.ResponseWriter, request *http.Request, params httpr
 	gdb := database.Connect()
 
 	var producto models.Producto
+
 	result := getProducto(&producto, params.ByName("id"), gdb)
 	if result.Error != nil {
 		writer.Header().Set("Content-Type", "application/json")
