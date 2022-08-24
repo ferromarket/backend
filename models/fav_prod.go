@@ -7,8 +7,8 @@ import (
 type FavProd struct {
 	gorm.Model
 	ID         uint64  `json:"ID" gorm:"primaryKey"`
-	IDProd     uint64  `json:"IDProd" gorm:"not null"`
-	IDUsuario  uint64  `json:"IDUsuario" gorm:"not null"`
+	ProdID     uint64  `json:"IDProd" gorm:"not null"`
+	UsuarioID  uint64  `json:"IDUsuario" gorm:"not null"`
 	Usuario    Usuario `json:"Usuario" gorm:"not null"`
 	NombreProd string  `json:"NombreProd" gorm:"not null"`
 }
