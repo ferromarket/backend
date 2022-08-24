@@ -176,7 +176,7 @@ func patchRepartidor(repartidor *models.Repartidor, gdb *gorm.DB) *gorm.DB {
 
 func DeleteRepartidor(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
-	database.Close(gdb)
+	defer database.Close(gdb)
 	var repartidor models.Repartidor
 	repartidor.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
 
