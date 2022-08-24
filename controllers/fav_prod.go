@@ -52,8 +52,8 @@ func ListFavProd(writer http.ResponseWriter, request *http.Request, params httpr
 	favProdList := FavProd{}
 	var favProd []models.FavProd
 
-	gdb.Model(&models.FavProd{}).Order("ID asc").Preload("Usuario").Find(&favProd)
-	//gdb.Model(&models.FavProd{}).Order("ID asc").Preload("Usuario").Preload("Producto").Find(&favProd)
+	//gdb.Model(&models.FavProd{}).Order("ID asc").Preload("Usuario").Find(&favProd)
+	gdb.Model(&models.FavProd{}).Order("ID asc").Preload("Usuario").Preload("Producto").Find(&favProd)
 	favProdList.FavProd = favProd
 
 	writer.Header().Set("Content-Type", "application/json")
