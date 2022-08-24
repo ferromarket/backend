@@ -6,7 +6,7 @@ import (
 
 func TestUsuarioEmptyName(t *testing.T) {
 	usuario := Usuario{Nombres: ""}
-	want := "Nombre vacío"
+	want := "nombre vacío"
 	err := usuario.Validate()
 	if err == nil || err.Error() != want {
 		t.Fatalf(`usuario.Validate() = %v, want match for %#q, nil`, err, want)

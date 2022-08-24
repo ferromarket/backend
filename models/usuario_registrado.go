@@ -43,7 +43,7 @@ func (user *Usuario) CheckPassword(providedPassword string) error {
 
 func (usuario *Usuario) Validate() error {
 	if len(strings.TrimSpace(usuario.Nombres)) == 0 {
-		return errors.New("Nombre vacío")
+		return errors.New("nombre vacío")
 	}
 	return nil
 }
