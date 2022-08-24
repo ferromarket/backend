@@ -16,11 +16,14 @@ func Initialize() *httprouter.Router {
 	AuthRoutes(router)
 	RepartidorRoutes(router)
 	FerreteriaRoutes(router)
+	ProductoRoutes(router)
 	UsuarioRoutes(router)
 	RegionRoutes(router)
 	CiudadRoutes(router)
 	ComunaRoutes(router)
 	HoraRoutes(router)
+	CategoriaRoutes(router)
+	FavProdRoutes(router)
 	return router
 }
 

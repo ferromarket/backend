@@ -54,6 +54,11 @@ func AutoMigrate(gdb *gorm.DB) {
 	gdb.AutoMigrate(&models.Vehiculo{})
 	gdb.AutoMigrate(&models.Repartidor{})
 	gdb.AutoMigrate(&models.Usuario{})
+	gdb.AutoMigrate(&models.Producto{})
+	gdb.AutoMigrate(&models.Categoria{})
+	gdb.AutoMigrate(&models.Especificacion{})
+	gdb.AutoMigrate(&models.EspecificacionData{})
+	gdb.AutoMigrate(&models.EspecificacionNombre{})
 }
 
 func DropAll(gdb *gorm.DB) {
@@ -68,7 +73,12 @@ func DropAll(gdb *gorm.DB) {
 		&models.FerreteriaHorario{},
 		&models.Usuario{},
 		&models.Repartidor{},
-		&models.Usuario{})
+		&models.Usuario{},
+		&models.Producto{},
+		&models.Categoria{},
+		&models.Especificacion{},
+		&models.EspecificacionData{},
+		&models.EspecificacionNombre{})
 }
 
 func Populate(gdb *gorm.DB) {
@@ -308,6 +318,50 @@ func populateFerreteria(gdb *gorm.DB) {
 	gdb.Create(&comunas)
 	gdb.Create(&dias)
 	gdb.Create(&horas)
+
+	categorias := []models.Categoria{
+		{
+			ID:     1,
+			Nombre: "Herramientas Manuales",
+		},
+		{
+			ID:     2,
+			Nombre: "Herramientas Electricas",
+		},
+		{
+			ID:     3,
+			Nombre: "Herramientas de Medicion",
+		},
+		{
+			ID:     4,
+			Nombre: "Herramientas para Jardin",
+		},
+		{
+			ID:     5,
+			Nombre: "Herramientas Industriales",
+		},
+		{
+			ID:     6,
+			Nombre: "Construccion",
+		},
+	}
+
+	gdb.Create(&categorias)
+
+	var categoriaID *uint64 = new(uint64)
+
+	*categoriaID = 1
+	categoria := models.Categoria{
+		CategoriaID: categoriaID,
+		Nombre:      "Hijo",
+	}
+	gdb.Create(&categoria)
+	*categoriaID = 7
+	categoria = models.Categoria{
+		CategoriaID: categoriaID,
+		Nombre:      "Hijo2",
+	}
+	gdb.Create(&categoria)
 }
 
 func Close(gdb *gorm.DB) {
