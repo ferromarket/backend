@@ -91,7 +91,7 @@ func GetVehiculo(writer http.ResponseWriter, request *http.Request, params httpr
 }
 
 func getVehiculo(vehiculo *models.Vehiculo, id string, gdb *gorm.DB) *gorm.DB {
-	return gdb.Model(&models.Vehiculo{}).Order("ID asc").Preload("Repartidor").Find(&vehiculo, id)
+	return gdb.Model(&models.Vehiculo{}).Order("ID asc").Joins("Repartidor").Find(&vehiculo, id)
 }
 
 func PutVehiculo(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
