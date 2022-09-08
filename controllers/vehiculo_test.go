@@ -112,35 +112,6 @@ func TestListVehiculos(t *testing.T) {
 	teardownVehiculo(gdb)
 }
 
-func TestGetVehiculo(t *testing.T) {
-	gdb, mock := setupVehiculo(t)
-
-	vehiculo, rows := vehiculoData()
-
-	mock.ExpectQuery(
-		regexp.QuoteMeta("SELECT * FROM `vehiculo` WHERE `vehiculo`.`id` = ? AND `vehiculo`.`deleted_at` IS NULL ORDER BY ID asc")).
-		WithArgs("1").
-		WillReturnRows(rows)
-
-	mock.ExpectQuery(
-		regexp.QuoteMeta("SELECT * FROM `repartidor` WHERE `repartidor`.`id` = ? AND `repartidor`.`deleted_at` IS NULL")).
-		WithArgs(1).
-		WillReturnRows(mock.NewRows(nil))
-
-	result := getVehiculo(&vehiculo, "1", gdb)
-	if (result.Error != nil) {
-		t.Errorf("Vehiculo failed: %v", result.Error)
-	} else if (result.RowsAffected == 0) {
-		t.Errorf("Vehiculo had 0 rows")
-	}
-
-	err := mock.ExpectationsWereMet()
-	if (err != nil) {
-		t.Errorf("Failed to meet expectations, got error: %v", err)
-	}
-
-	teardownVehiculo(gdb)
-}
 
 func TestPutVehiculos(t *testing.T) {
 	gdb, mock := setupVehiculo(t)
