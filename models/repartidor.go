@@ -8,7 +8,7 @@ import (
 type Repartidor struct {
 	gorm.Model
 	ID                uint64 `json:"ID" gorm:"primaryKey"`
-	RUT               string `json:"RUT" gorm:"unique;size:9;not null"`
+	RUT               string `json:"RUT" gorm:"unique;not null"`
 	Contrasena        string `json:"Contrasena" gorm:"not null"`
 	Email             string `json:"Email" gorm:"not null"`
 	Nombres           string `json:"Nombres" gorm:"not null"`
