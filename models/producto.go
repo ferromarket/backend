@@ -8,5 +8,7 @@ type Producto struct {
 	CategoriaID    *uint64          `json:"CategoriaID" gorm:"not null"`
 	Categoria      *Categoria       `json:"Categoria"`
 	Nombre         string           `json:"Nombre" gorm:"not null"`
+	Valor1         string           `json:"Valor1" gorm:"not null"`
+	Valor2         string           `json:"Valor2" gorm:"not null"`
 	Especificacion []Especificacion `json:"Especificacion"`
 }
