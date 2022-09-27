@@ -21,20 +21,19 @@ type Usuario struct {
 	Telefono        uint32     `json:"Telefono" gorm:"not null"`
 	Direccion       string     `json:"Direccion" gorm:"not null"`
 	FechaNacimiento utils.Date `json:"FechaNacimiento" gorm:"not null"`
-	Roles           []Rol      `json:"-" gorm:"many2many:usuario_rol"`
 }
 
-func (user *Usuario) HashPassword(password string) error {
+func (usuario *Usuario) HashPassword(password string) error {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	if err != nil {
 		return err
 	}
-	user.Contrasena = string(bytes)
+	usuario.Contrasena = string(bytes)
 	return nil
 }
 
-func (user *Usuario) CheckPassword(providedPassword string) error {
-	err := bcrypt.CompareHashAndPassword([]byte(user.Contrasena), []byte(providedPassword))
+func (usuario *Usuario) CheckPassword(providedPassword string) error {
+	err := bcrypt.CompareHashAndPassword([]byte(usuario.Contrasena), []byte(providedPassword))
 	if err != nil {
 		return err
 	}
