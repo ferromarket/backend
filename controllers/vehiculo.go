@@ -14,7 +14,7 @@ import (
 
 func PostVehiculo(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
-
+	defer database.Close(gdb)
 	decoder := json.NewDecoder(request.Body)
 
 	var vehiculo models.Vehiculo
@@ -24,6 +24,7 @@ func PostVehiculo(writer http.ResponseWriter, request *http.Request, params http
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		return
 	}
 
 	result := postVehiculo(vehiculo, gdb)
@@ -31,11 +32,11 @@ func PostVehiculo(writer http.ResponseWriter, request *http.Request, params http
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		return
 	} else {
 		writer.WriteHeader(http.StatusOK)
+		return
 	}
-
-	database.Close(gdb)
 }
 
 func postVehiculo(vehiculo models.Vehiculo, gdb *gorm.DB) *gorm.DB {
@@ -44,7 +45,7 @@ func postVehiculo(vehiculo models.Vehiculo, gdb *gorm.DB) *gorm.DB {
 
 func ListVehiculos(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
-
+	defer database.Close(gdb)
 	var Vehiculos []models.Vehiculo
 
 	result := listVehiculos(&Vehiculos, gdb)
@@ -52,13 +53,13 @@ func ListVehiculos(writer http.ResponseWriter, request *http.Request, params htt
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		return
 	} else {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusOK)
 		json.NewEncoder(writer).Encode(Vehiculos)
+		return
 	}
-
-	database.Close(gdb)
 }
 
 func listVehiculos(Vehiculos *[]models.Vehiculo, gdb *gorm.DB) *gorm.DB {
@@ -67,7 +68,7 @@ func listVehiculos(Vehiculos *[]models.Vehiculo, gdb *gorm.DB) *gorm.DB {
 
 func GetVehiculo(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
-
+	defer database.Close(gdb)
 	var vehiculo models.Vehiculo
 
 	result := getVehiculo(&vehiculo, params.ByName("id"), gdb)
@@ -75,26 +76,27 @@ func GetVehiculo(writer http.ResponseWriter, request *http.Request, params httpr
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		return
 	} else if result.RowsAffected == 0 {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe vehiculo con id " + params.ByName("id") + "!"})
+		return
 	} else {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusOK)
 		json.NewEncoder(writer).Encode(vehiculo)
+		return
 	}
-
-	database.Close(gdb)
 }
 
 func getVehiculo(vehiculo *models.Vehiculo, id string, gdb *gorm.DB) *gorm.DB {
-	return gdb.Model(&models.Vehiculo{}).Order("ID asc").Preload("Repartidor").Find(&vehiculo, id)
+	return gdb.Model(&models.Vehiculo{}).Order("ID asc").Joins("Repartidor").Find(&vehiculo, id)
 }
 
 func PutVehiculo(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
-
+	defer database.Close(gdb)
 	var vehiculo models.Vehiculo
 
 	decoder := json.NewDecoder(request.Body)
@@ -104,6 +106,7 @@ func PutVehiculo(writer http.ResponseWriter, request *http.Request, params httpr
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		return
 	}
 
 	vehiculo.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
@@ -113,15 +116,16 @@ func PutVehiculo(writer http.ResponseWriter, request *http.Request, params httpr
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		return
 	} else if result.RowsAffected == 0 {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe vehiculo con id " + params.ByName("id") + "!"})
+		return
 	} else {
 		writer.WriteHeader(http.StatusOK)
+		return
 	}
-
-	database.Close(gdb)
 }
 
 func putVehiculo(vehiculo *models.Vehiculo, gdb *gorm.DB) *gorm.DB {
@@ -130,7 +134,7 @@ func putVehiculo(vehiculo *models.Vehiculo, gdb *gorm.DB) *gorm.DB {
 
 func PatchVehiculo(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
-
+	defer database.Close(gdb)
 	var vehiculo models.Vehiculo
 
 	decoder := json.NewDecoder(request.Body)
@@ -140,6 +144,7 @@ func PatchVehiculo(writer http.ResponseWriter, request *http.Request, params htt
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		return
 	}
 
 	vehiculo.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
@@ -149,15 +154,16 @@ func PatchVehiculo(writer http.ResponseWriter, request *http.Request, params htt
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		return
 	} else if result.RowsAffected == 0 {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe vehiculo con id " + params.ByName("id") + "!"})
+		return
 	} else {
 		writer.WriteHeader(http.StatusOK)
+		return
 	}
-
-	database.Close(gdb)
 }
 
 func patchVehiculo(vehiculo *models.Vehiculo, gdb *gorm.DB) *gorm.DB {
@@ -166,6 +172,7 @@ func patchVehiculo(vehiculo *models.Vehiculo, gdb *gorm.DB) *gorm.DB {
 
 func DeleteVehiculo(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
+	defer database.Close(gdb)
 
 	var vehiculo models.Vehiculo
 	vehiculo.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
@@ -175,15 +182,18 @@ func DeleteVehiculo(writer http.ResponseWriter, request *http.Request, params ht
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		return
 	} else if result.RowsAffected == 0 {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe vehiculo con id " + params.ByName("id") + "!"})
+		return
 	} else {
 		writer.WriteHeader(http.StatusOK)
+		return
 	}
 
-	database.Close(gdb)
+
 }
 
 func deleteVehiculo(vehiculo *models.Vehiculo, hard bool, gdb *gorm.DB) *gorm.DB {

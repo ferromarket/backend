@@ -57,6 +57,13 @@ func ListProductos(writer http.ResponseWriter, request *http.Request, params htt
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
 	} else {
+		for producto := range productos {
+			result := gdb.Model(&models.Especificacion{}).Order("ID asc").Where("producto_id = ?", productos[producto].ID).Preload("EspecificacionNombre").Preload("EspecificacionData").Find(&productos[producto].Especificacion)
+			if result.Error != nil {
+				utils.JSONErrorOutput(writer, http.StatusBadRequest, result.Error.Error())
+				return
+			}
+		}
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusOK)
 		json.NewEncoder(writer).Encode(productos)
@@ -69,7 +76,6 @@ func listProductos(productos *[]models.Producto, gdb *gorm.DB) *gorm.DB {
 	if result.Error != nil {
 		return result
 	}
-
 	for indice := range *productos {
 		(*productos)[indice].Categoria.Categoria = new(models.Categoria)
 
@@ -93,7 +99,6 @@ func getCategorias(categoriaID uint64, categoria *models.Categoria, gdb *gorm.DB
 		if result.Error != nil {
 			return result
 		}
-
 		// Creacion de lista enlazada para las categorias padre
 		*categoria = nuevaCategoria
 		if nuevaCategoria.CategoriaID != nil {
@@ -109,7 +114,9 @@ func getCategorias(categoriaID uint64, categoria *models.Categoria, gdb *gorm.DB
 
 func GetProducto(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
+
 	var producto models.Producto
+
 	result := getProducto(&producto, params.ByName("id"), gdb)
 	if result.Error != nil {
 		writer.Header().Set("Content-Type", "application/json")

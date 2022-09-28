@@ -16,6 +16,7 @@ func Initialize() *httprouter.Router {
 	AuthRoutes(router)
 	RepartidorRoutes(router)
 	FerreteriaRoutes(router)
+	VehiculoRoutes(router)
 	ProductoRoutes(router)
 	UsuarioRoutes(router)
 	RegionRoutes(router)

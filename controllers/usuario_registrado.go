@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -25,6 +26,14 @@ func PostUsuario(writer http.ResponseWriter, request *http.Request, params httpr
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
 	}
+
+	rawDecodedText, err := base64.StdEncoding.DecodeString(usuario.Contrasena)
+	if err != nil {
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, err.Error())
+	}
+	usuario.Contrasena = string(rawDecodedText)
+
+	usuario.HashPassword(usuario.Contrasena)
 
 	result := postUsuario(usuario, gdb)
 	if result.Error != nil {
@@ -96,6 +105,14 @@ func PutUsuario(writer http.ResponseWriter, request *http.Request, params httpro
 		return
 	}
 
+	if usuario.Contrasena != "" {
+		rawDecodedText, err := base64.StdEncoding.DecodeString(usuario.Contrasena)
+		if err != nil {
+			utils.JSONErrorOutput(writer, http.StatusBadRequest, err.Error())
+		}
+		usuario.Contrasena = string(rawDecodedText)
+	}
+
 	usuario.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
 
 	err = putUsuario(usuario, gdb)
@@ -128,6 +145,14 @@ func PatchUsuario(writer http.ResponseWriter, request *http.Request, params http
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
 		return
+	}
+
+	if usuario.Contrasena != "" {
+		rawDecodedText, err := base64.StdEncoding.DecodeString(usuario.Contrasena)
+		if err != nil {
+			utils.JSONErrorOutput(writer, http.StatusBadRequest, err.Error())
+		}
+		usuario.Contrasena = string(rawDecodedText)
 	}
 
 	usuario.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)

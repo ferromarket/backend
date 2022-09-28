@@ -14,6 +14,7 @@ import (
 
 func PostRepartidor(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
+	defer database.Close(gdb)
 
 	decoder := json.NewDecoder(request.Body)
 
@@ -24,6 +25,7 @@ func PostRepartidor(writer http.ResponseWriter, request *http.Request, params ht
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		return
 	}
 
 	result := postRepartidor(repartidor, gdb)
@@ -31,11 +33,11 @@ func PostRepartidor(writer http.ResponseWriter, request *http.Request, params ht
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		return
 	} else {
 		writer.WriteHeader(http.StatusOK)
+		return
 	}
-
-	database.Close(gdb)
 }
 
 func postRepartidor(repartidor models.Repartidor, gdb *gorm.DB) *gorm.DB {
@@ -44,7 +46,7 @@ func postRepartidor(repartidor models.Repartidor, gdb *gorm.DB) *gorm.DB {
 
 func ListRepartidores(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
-
+	defer database.Close(gdb)
 	var repartidores []models.Repartidor
 
 	result := listRepartidores(&repartidores, gdb)
@@ -52,13 +54,13 @@ func ListRepartidores(writer http.ResponseWriter, request *http.Request, params 
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		return
 	} else {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusOK)
 		json.NewEncoder(writer).Encode(repartidores)
+		return
 	}
-
-	database.Close(gdb)
 }
 
 func listRepartidores(repartidores *[]models.Repartidor, gdb *gorm.DB) *gorm.DB {
@@ -67,7 +69,7 @@ func listRepartidores(repartidores *[]models.Repartidor, gdb *gorm.DB) *gorm.DB 
 
 func GetRepartidor(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
-
+	defer database.Close(gdb)
 	var repartidor models.Repartidor
 
 	result := getRepartidor(&repartidor, params.ByName("id"), gdb)
@@ -75,17 +77,18 @@ func GetRepartidor(writer http.ResponseWriter, request *http.Request, params htt
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		return
 	} else if result.RowsAffected == 0 {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe repartidor con id " + params.ByName("id") + "!"})
+		return
 	} else {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusOK)
 		json.NewEncoder(writer).Encode(repartidor)
+		return
 	}
-
-	database.Close(gdb)
 }
 
 func getRepartidor(repartidor *models.Repartidor, id string, gdb *gorm.DB) *gorm.DB {
@@ -94,7 +97,7 @@ func getRepartidor(repartidor *models.Repartidor, id string, gdb *gorm.DB) *gorm
 
 func PutRepartidor(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
-
+	defer database.Close(gdb)
 	var repartidor models.Repartidor
 
 	decoder := json.NewDecoder(request.Body)
@@ -104,6 +107,7 @@ func PutRepartidor(writer http.ResponseWriter, request *http.Request, params htt
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		return
 	}
 
 	repartidor.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
@@ -113,15 +117,17 @@ func PutRepartidor(writer http.ResponseWriter, request *http.Request, params htt
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		return
 	} else if result.RowsAffected == 0 {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe repartidor con id " + params.ByName("id") + "!"})
+		return
 	} else {
 		writer.WriteHeader(http.StatusOK)
+		return
 	}
 
-	database.Close(gdb)
 }
 
 func putRepartidor(repartidor *models.Repartidor, gdb *gorm.DB) *gorm.DB {
@@ -130,6 +136,7 @@ func putRepartidor(repartidor *models.Repartidor, gdb *gorm.DB) *gorm.DB {
 
 func PatchRepartidor(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
+	defer database.Close(gdb)
 
 	var repartidor models.Repartidor
 
@@ -140,6 +147,7 @@ func PatchRepartidor(writer http.ResponseWriter, request *http.Request, params h
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		return
 	}
 
 	repartidor.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
@@ -149,15 +157,17 @@ func PatchRepartidor(writer http.ResponseWriter, request *http.Request, params h
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		return
 	} else if result.RowsAffected == 0 {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe repartidor con id " + params.ByName("id") + "!"})
+		return
 	} else {
 		writer.WriteHeader(http.StatusOK)
+		return
 	}
 
-	database.Close(gdb)
 }
 
 func patchRepartidor(repartidor *models.Repartidor, gdb *gorm.DB) *gorm.DB {
@@ -166,7 +176,7 @@ func patchRepartidor(repartidor *models.Repartidor, gdb *gorm.DB) *gorm.DB {
 
 func DeleteRepartidor(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
-
+	defer database.Close(gdb)
 	var repartidor models.Repartidor
 	repartidor.ID, _ = strconv.ParseUint(params.ByName("id"), 10, 64)
 
@@ -175,15 +185,16 @@ func DeleteRepartidor(writer http.ResponseWriter, request *http.Request, params 
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
+		return
 	} else if result.RowsAffected == 0 {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: "No existe repartidor con id " + params.ByName("id") + "!"})
+		return
 	} else {
 		writer.WriteHeader(http.StatusOK)
+		return
 	}
-
-	database.Close(gdb)
 }
 
 func deleteRepartidor(repartidor *models.Repartidor, hard bool, gdb *gorm.DB) *gorm.DB {
