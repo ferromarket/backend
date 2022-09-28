@@ -15,7 +15,6 @@ import (
 
 func PostUsuario(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
-	defer database.Close(gdb)
 
 	decoder := json.NewDecoder(request.Body)
 
@@ -26,50 +25,52 @@ func PostUsuario(writer http.ResponseWriter, request *http.Request, params httpr
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
-		return
 	}
 
 	rawDecodedText, err := base64.StdEncoding.DecodeString(usuario.Contrasena)
-    if err != nil {
-        utils.JSONErrorOutput(writer, http.StatusBadRequest, err.Error())
-    }
+	if err != nil {
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, err.Error())
+	}
 	usuario.Contrasena = string(rawDecodedText)
 
 	usuario.HashPassword(usuario.Contrasena)
 
-	err = postUsuario(usuario, gdb)
-	if err != nil {
+	result := postUsuario(usuario, gdb)
+	if result.Error != nil {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: err.Error()})
+		json.NewEncoder(writer).Encode(utils.ErrorMessage{ErrorMessage: result.Error.Error()})
 	} else {
 		writer.WriteHeader(http.StatusOK)
 	}
+
+	database.Close(gdb)
 }
 
-func postUsuario(usuario models.Usuario, gdb *gorm.DB) error {
-	return gdb.Create(&usuario).Error
+func postUsuario(usuario models.Usuario, gdb *gorm.DB) *gorm.DB {
+	return gdb.Create(&usuario)
 }
 
 func ListUsuarios(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	gdb := database.Connect()
 	defer database.Close(gdb)
 
-	type Usuarios struct {
-		Usuarios []models.Usuario `json:"Usuario"`
-	}
-
 	var usuarios []models.Usuario
 
-	gdb.Model(&models.Usuario{}).Order("ID asc").Find(&usuarios)
-
-	for i := range usuarios {
-		usuarios[i].Contrasena = ""
+	result := listUsuarios(&usuarios, gdb)
+	if result.Error != nil {
+		utils.JSONErrorOutput(writer, http.StatusBadRequest, result.Error.Error())
+		return
+	} else {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusOK)
+		json.NewEncoder(writer).Encode(usuarios)
+		return
 	}
+}
 
-	writer.Header().Set("Content-Type", "application/json")
-	writer.WriteHeader(http.StatusOK)
-	json.NewEncoder(writer).Encode(usuarios)
+func listUsuarios(usuarios *[]models.Usuario, gdb *gorm.DB) *gorm.DB {
+	return gdb.Model(&models.Usuario{}).Order("ID asc").Find(&usuarios)
 }
 
 func GetUsuario(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
